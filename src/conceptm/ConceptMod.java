@@ -1,9 +1,9 @@
-package template;
+package conceptm;
 
 import mindustry.mod.*;
-import template.gen.*;
+import conceptm.gen.*;
 
-public class ModTemplate extends Mod{
+public class ConceptMod extends Mod{
     @Override
     public void loadContent(){
         EntityRegistry.register();
