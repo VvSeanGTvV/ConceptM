@@ -1,9 +1,9 @@
 {
-    "displayName": "Mod Template",
-    "description": "Mindustry Java mod template, complete with EntityAnno and syntax downgrader integration.",
-    "version": "v1.0",
+    "displayName": "Concept M",
+    "description": "idea, dumb ideas implementation",
+    "version": "1.0",
     "minGameVersion": "146",
-    "author": "You",
+    "author": "VvSeanGtvV",
     "java": true,
-    "main": "template.ModTemplate"
+    "main": "conceptm.ModTemplate"
 }
