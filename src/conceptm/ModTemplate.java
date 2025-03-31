@@ -23,20 +23,6 @@ public class ModTemplate extends Mod{
     public void loadContent(){
         EntityRegistry.register();
         ConceptBlocks.load();
-
-        for (var item0 : Vars.content.items()){
-            int i = 0;
-            for (var item1 : Vars.content.items()){
-                if (canCombine(item0, item1) && i < 10){
-                    combo.add(new ComboItem(item0, item1));
-                    i++;
-                } else {
-                    break;
-                }
-            }
-            if (i >= 10) break;
-        }
-
     }
 
     // Example filter method
