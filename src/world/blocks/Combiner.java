@@ -71,7 +71,7 @@ public class Combiner extends ComboBlock {
                     a.image(Icon.rightSmall).pad(4f);
                     if (output != null) a.image(output.fullIcon).color(output.color).pad(4f);
                     else a.add("?").pad(4f);
-                }).growX().get().setFillParent(true);
+                }).growX().pad(10f).get().setFillParent(true);
                     
             }).growX().pad(10f).center().get().background(Styles.black8).setFillParent(true);
         }
