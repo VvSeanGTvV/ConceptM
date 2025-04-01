@@ -50,24 +50,31 @@ public class Combiner extends ComboBlock {
                 if (output != null) {
                     t.add(output.name, Styles.defaultLabel).pad(4f);
                     t.row();
-                    t.image(Styles.black8).fillX().height(3.0F).pad(3.0F).row();
+                    //t.image(Styles.black8).fillX().height(3.0F).pad(3.0F).row();
                     t.row();
-
-                    t.table(a -> {
-                        if (select0 != null) a.image(select0.fullIcon).pad(4f);
-                        else if (select0c != null) a.image(select0c.fullIcon).color(select0c.color).pad(4f);
-
-                        a.add("+").pad(4f);
-                        if (select1 != null) a.image(select1.fullIcon).pad(4f);
-                        else if (select1c != null) a.image(select1c.fullIcon).color(select1c.color).pad(4f);
-
-                        a.image(Icon.rightSmall).pad(4f);
-                        if (output.item1 != null) a.image(output.item1.fullIcon).color(output.color).pad(4f);
-                        else if (output.item1c != null) a.image(output.item1c.fullIcon).color(output.color).pad(4f);
-
-                    }).growX().get().setFillParent(true);
+                } else {
+                    t.add("???", Styles.defaultLabel).pad(4f);
+                    t.row();
+                    //t.image(Styles.black8).fillX().height(3.0F).pad(3.0F).row();
+                    t.row();
                 }
-            }).growX().center().get().background(Styles.black8).setFillParent(true);
+                t.table(a -> {
+                    if (select0 != null) a.image(select0.fullIcon).pad(4f);
+                    else if (select0c != null) a.image(select0c.fullIcon).color(select0c.color).pad(4f);
+                    else a.add("?").pad(4f);
+
+                    a.add("+").pad(4f);
+                    if (select1 != null) a.image(select1.fullIcon).pad(4f);
+                    else if (select1c != null) a.image(select1c.fullIcon).color(select1c.color).pad(4f);
+                    else a.add("?").pad(4f);
+
+                    a.image(Icon.rightSmall).pad(4f);
+                    if (output.item1 != null) a.image(output.item1.fullIcon).color(output.color).pad(4f);
+                    else if (output.item1c != null) a.image(output.item1c.fullIcon).color(output.color).pad(4f);
+                    else a.add("?").pad(4f);
+                }).growX().get().setFillParent(true);
+                    
+            }).growX().pad(10f).center().get().background(Styles.black8).setFillParent(true);
         }
 
         @Override
