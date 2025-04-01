@@ -1,32 +1,31 @@
 package conceptm;
 
-import arc.struct.Seq;
+import arc.Core;
+import arc.graphics.*;
+import arc.graphics.g2d.*;
+import arc.struct.*;
+import arc.util.Structs;
 import mindustry.Vars;
+import mindustry.graphics.MultiPacker;
+import mindustry.graphics.MultiPacker.*;
 import mindustry.mod.*;
 import conceptm.gen.*;
-import mindustry.type.Item;
-import world.type.ComboItem;
+
+import static mindustry.Vars.*;
 
 public class ModTemplate extends Mod{
 
-    public static Seq<ComboItem> combo = new Seq<>();
+    public static String internalMod = "concept-m";
+    public static Mods.LoadedMod mod;
 
-    public static ComboItem findItem(Item item0, Item item1){
-        ComboItem r = null;
-        for (var a : combo){
-            if (a.item1 == item0 && a.item2 == item1) r = a;
-        }
-        return r;
+    @Override
+    public void init() {
+        mod = mods.locateMod(internalMod);
     }
 
     @Override
     public void loadContent(){
         EntityRegistry.register();
         ConceptBlocks.load();
-    }
-
-    // Example filter method
-    boolean canCombine(Item a, Item b) {
-        return !a.isHidden() && !b.isHidden() && a != b; // Example: don't combine two low priority items
     }
 }

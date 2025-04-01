@@ -3,9 +3,6 @@ package world.type;
 import arc.Core;
 import arc.graphics.*;
 import arc.graphics.g2d.*;
-import arc.util.Log;
-import mindustry.gen.Tex;
-import mindustry.graphics.*;
 import mindustry.type.Item;
 
 import java.util.*;
@@ -64,7 +61,7 @@ public class ComboItem {
         this.buildable = item1.buildable || item2.buildable;
         this.name = name;
 
-        createIcons(new MultiPacker());
+        createIcons(item1, item2, null, null);
     }
 
     public ComboItem(String name, ComboItem item1, Item item2) {
@@ -86,7 +83,7 @@ public class ComboItem {
         this.buildable = item1.buildable || item2.buildable;
         this.name = name;
 
-        createIcons(new MultiPacker());
+        createIcons(null, item2, item1, null);
     }
 
     public ComboItem(String name, Item item1, ComboItem item2) {
@@ -108,7 +105,7 @@ public class ComboItem {
         this.buildable = item1.buildable || item2.buildable;
         this.name = name;
 
-        createIcons(new MultiPacker());
+        createIcons(item1, null, null, item2);
     }
 
     public ComboItem(String name, ComboItem item1, ComboItem item2) {
@@ -130,7 +127,7 @@ public class ComboItem {
         this.buildable = item1.buildable || item2.buildable;
         this.name = name;
 
-        createIcons(new MultiPacker());
+        createIcons(null, null, item1, item2);
     }
 
     public ComboItem(Item item1, Item item2) {
@@ -171,51 +168,14 @@ public class ComboItem {
 
     public void draw(float x, float y, float size, Color color){
         Draw.color(color);
-        if (item1 == null) Draw.rect(item1c.fullIcon, x, y, size, size); else
-            Draw.rect(Core.atlas.find(name + "-full"), x, y, size, size);
+        Draw.rect(fullIcon, x, y, size, size);
     }
 
-    public void createIcons(MultiPacker packer) {
+    public void createIcons(Item item0, Item item1, ComboItem comboItem0, ComboItem comboItem1) {
         // Get the pixmaps for both items
-        var icon1 = (item1 != null) ? item1.fullIcon : (item1c != null) ? item1c.fullIcon : Core.atlas.find("white");
-        var icon2 = (item2 != null) ? item2.fullIcon : (item2c != null) ? item2c.fullIcon : Core.atlas.find("white");
-        if (!Core.atlas.isFound(Core.atlas.find(name + "-full"))) {
-            PixmapRegion pix1 = Core.atlas.getPixmap(icon1);
-            PixmapRegion pix2 = Core.atlas.getPixmap(icon2);
-
-            // Determine the output size (use the larger dimensions)
-            int width = Math.max(icon1.width, icon2.width);
-            int height = Math.max(icon1.height, icon2.height);
-
-            // Create output pixmap
-            Pixmap result = new Pixmap(width, height);
-            String regionName = name;
-            // Blend each pixel
-            for (int x = 0; x < width; x++) {
-                for (int y = 0; y < height; y++) {
-                    // Get colors from both pixmaps (with bounds checking)
-                    Color color1 = new Color();
-                    Color color2 = new Color();
-
-                    if (x < pix1.width && y < pix1.height) {
-                        color1.set(pix1.pixmap.get(x, y));
-                    }
-
-                    if (x < pix2.width && y < pix2.height) {
-                        color2.set(pix2.pixmap.get(x, y));
-                    }
-
-                    // Blend the colors
-                    Color blended = blendColorsVibrant(color1, color2);
-
-                    // Set the blended pixel
-                    result.set(x, y, blended);
-                }
-            }
-
-            packer.add(MultiPacker.PageType.main, regionName + "-full", result);
-            Core.atlas.addRegion(regionName + "-full", new TextureRegion(new Texture(packer.get(regionName + "-full").pixmap)));
-        }
+        var icon1 = (item0 != null) ? item0.fullIcon : (comboItem0 != null) ? comboItem0.fullIcon : Core.atlas.find("white");
+        var icon2 = (item1  != null) ? item1.fullIcon : (comboItem1 != null) ? comboItem1.fullIcon : Core.atlas.find("white");
+        fullIcon = icon1;
     }
 
     /*@Override
@@ -238,17 +198,17 @@ public class ComboItem {
 
         public String getNameFor(ComboItem a, Item b) {
             String key = generateRegistryKey(a.name, b.name);
-            return generatedNames.computeIfAbsent(key, k -> DynamicNameGenerator.generateNameSingleCombo(a, b));
+            return generatedNames.computeIfAbsent(key, k -> DynamicNameGenerator.generateName(a, b));
         }
 
         public String getNameFor(Item a, ComboItem b) {
             String key = generateRegistryKey(a.name, b.name);
-            return generatedNames.computeIfAbsent(key, k -> DynamicNameGenerator.generateNameSingleCombo(a, b));
+            return generatedNames.computeIfAbsent(key, k -> DynamicNameGenerator.generateName(a, b));
         }
 
         public String getNameFor(ComboItem a, ComboItem b) {
             String key = generateRegistryKey(a.name, b.name);
-            return generatedNames.computeIfAbsent(key, k -> DynamicNameGenerator.generateNameDualCombo(a, b));
+            return generatedNames.computeIfAbsent(key, k -> DynamicNameGenerator.generateName(a, b));
         }
 
         private String generateRegistryKey(String a, String b) {
@@ -277,120 +237,105 @@ public class ComboItem {
                 "bio", "organ", "cell", "vita", "life", "growth", "culture"
         };
 
-        public static String generateName(Item a, Item b) {
-            // Determine material category
-            MaterialType typeA = classifyMaterial(a);
-            MaterialType typeB = classifyMaterial(b);
-
-            // Generate based on combined categories
-            if (typeA == MaterialType.METAL && typeB == MaterialType.METAL) {
-                return generateMetalName(a.name, b.name);
-            } else if (typeA == MaterialType.CRYSTAL || typeB == MaterialType.CRYSTAL) {
-                return generateCrystalName(a.name, b.name);
-            } else if (typeA == MaterialType.ORGANIC || typeB == MaterialType.ORGANIC) {
-                return generateOrganicName(a.name, b.name);
-            } else {
-                return generateDefaultName(a.name, b.name);
+        private static String removeCommonSuffixes(String name) {
+            for (String suffix : COMMON_SUFFIXES) {
+                if (name.toLowerCase().endsWith(suffix)) {
+                    return name.substring(0, name.length() - suffix.length());
+                }
             }
+            return name;
         }
 
-        public static String generateNameSingleCombo(ComboItem a, Item b) {
-            // Determine material category
-            MaterialType typeA = classifyMaterial(a);
-            MaterialType typeB = classifyMaterial(b);
+        private static boolean isGoodBlend(String blended) {
+            // Simple heuristic - at least 5 characters and not too long
+            return blended.length() >= 5 && blended.length() <= 12;
+        }
+        private static String getMeaningfulPart(String name) {
+            // Try to find the stem of the word
+            String clean = removeCommonSuffixes(name);
 
-            // Generate based on combined categories
-            if (typeA == MaterialType.METAL && typeB == MaterialType.METAL) {
-                return generateMetalName(a.name, b.name);
-            } else if (typeA == MaterialType.CRYSTAL || typeB == MaterialType.CRYSTAL) {
-                return generateCrystalName(a.name, b.name);
-            } else if (typeA == MaterialType.ORGANIC || typeB == MaterialType.ORGANIC) {
-                return generateOrganicName(a.name, b.name);
-            } else {
-                return generateDefaultName(a.name, b.name);
+            // Take first 3-4 meaningful characters
+            int length = Math.min(4, clean.length());
+            if (isVowel(clean.charAt(length-1)) && length > 1) {
+                length--; // Avoid ending with vowel
             }
+            return clean.substring(0, length);
         }
 
-        public static String generateNameSingleCombo(Item a, ComboItem b) {
-            // Determine material category
-            MaterialType typeA = classifyMaterial(a);
-            MaterialType typeB = classifyMaterial(b);
-
-            // Generate based on combined categories
-            if (typeA == MaterialType.METAL && typeB == MaterialType.METAL) {
-                return generateMetalName(a.name, b.name);
-            } else if (typeA == MaterialType.CRYSTAL || typeB == MaterialType.CRYSTAL) {
-                return generateCrystalName(a.name, b.name);
-            } else if (typeA == MaterialType.ORGANIC || typeB == MaterialType.ORGANIC) {
-                return generateOrganicName(a.name, b.name);
-            } else {
-                return generateDefaultName(a.name, b.name);
-            }
+        private static boolean isVowel(char c) {
+            return "aeiouAEIOU".indexOf(c) != -1;
         }
 
-        public static String generateNameDualCombo(ComboItem a, ComboItem b) {
-            // Determine material category
+        public static String generateName(Object a, Object b) {
+            // First try linguistic blending
+            var ia = (a instanceof Item i0) ? i0.localizedName : (a instanceof ComboItem c0) ? c0.localizedName : null;
+            var ib = (b instanceof Item i1) ? i1.localizedName : (b instanceof ComboItem c1) ? c1.localizedName : null;
+            String blended = blendNamesLinguistically(ia, ib);
+            if (isGoodBlend(blended)) {
+                return blended;
+            }
+
+            // Fall back to material-based generation
             MaterialType typeA = classifyMaterial(a);
             MaterialType typeB = classifyMaterial(b);
+            String suffix = determineSuffix(a, b);
 
-            // Generate based on combined categories
             if (typeA == MaterialType.METAL && typeB == MaterialType.METAL) {
-                return generateMetalName(a.name, b.name);
+                return generateMetalName(ia, ib, suffix);
             } else if (typeA == MaterialType.CRYSTAL || typeB == MaterialType.CRYSTAL) {
-                return generateCrystalName(a.name, b.name);
+                return generateCrystalName(ia, ib, suffix);
             } else if (typeA == MaterialType.ORGANIC || typeB == MaterialType.ORGANIC) {
-                return generateOrganicName(a.name, b.name);
+                return generateOrganicName(ia, ib, suffix);
             } else {
-                return generateDefaultName(a.name, b.name);
+                return generateDefaultName(ia, ib, suffix);
             }
         }
 
         private enum MaterialType { METAL, CRYSTAL, ORGANIC, OTHER }
 
-        private static MaterialType classifyMaterial(Item item) {
-            if (item.hardness > 4 && item.flammability < 0.3f) {
-                return MaterialType.METAL;
-            } else if (item.hardness > 5 && item.radioactivity < 0.2f) {
-                return MaterialType.CRYSTAL;
-            } else if (item.flammability > 0.5f || item.name.contains("flesh")) {
-                return MaterialType.ORGANIC;
+        private static MaterialType classifyMaterial(Object item) {
+            if (item instanceof Item a) {
+                if (a.hardness > 4 && a.flammability < 0.3f) {
+                    return MaterialType.METAL;
+                } else if (a.hardness > 5 && a.radioactivity < 0.2f) {
+                    return MaterialType.CRYSTAL;
+                } else if (a.flammability > 0.5f || a.name.contains("flesh")) {
+                    return MaterialType.ORGANIC;
+                }
+            }
+
+            if (item instanceof ComboItem a) {
+                if (a.hardness > 4 && a.flammability < 0.3f) {
+                    return MaterialType.METAL;
+                } else if (a.hardness > 5 && a.radioactivity < 0.2f) {
+                    return MaterialType.CRYSTAL;
+                } else if (a.flammability > 0.5f || a.name.contains("flesh")) {
+                    return MaterialType.ORGANIC;
+                }
             }
             return MaterialType.OTHER;
         }
 
-        private static MaterialType classifyMaterial(ComboItem item) {
-            if (item.hardness > 4 && item.flammability < 0.3f) {
-                return MaterialType.METAL;
-            } else if (item.hardness > 5 && item.radioactivity < 0.2f) {
-                return MaterialType.CRYSTAL;
-            } else if (item.flammability > 0.5f || item.name.contains("flesh")) {
-                return MaterialType.ORGANIC;
-            }
-            return MaterialType.OTHER;
-        }
-
-        private static String generateMetalName(String a, String b) {
-            String base = getBaseName(a) + getBaseName(b);
-            String suffix = COMMON_SUFFIXES[(a.hashCode() + b.hashCode()) % COMMON_SUFFIXES.length];
+        private static String generateMetalName(String a, String b, String suffix) {
+            String base = getMeaningfulPart(a) + getMeaningfulPart(b);
             return capitalize(base + suffix);
         }
 
-        private static String generateCrystalName(String a, String b) {
-            String part1 = CRYSTAL_PARTS[Math.abs(a.hashCode()) % CRYSTAL_PARTS.length];
-            String part2 = CRYSTAL_PARTS[Math.abs(b.hashCode()) % CRYSTAL_PARTS.length];
+        private static String generateCrystalName(String a, String b, String suffix) {
+            String part1 = getMeaningfulPart(a);
+            String part2 = getMeaningfulPart(b);
             return capitalize(part1 + part2 + "ite");
         }
 
-        private static String generateOrganicName(String a, String b) {
-            String prefix = ORGANIC_PARTS[Math.abs(a.hashCode()) % ORGANIC_PARTS.length];
-            String suffix = ORGANIC_PARTS[Math.abs(b.hashCode()) % ORGANIC_PARTS.length];
-            return capitalize(prefix + suffix + "ium");
+        private static String generateOrganicName(String a, String b, String suffix) {
+            String part1 = getMeaningfulPart(a);
+            String part2 = getMeaningfulPart(b);
+            return capitalize(part1 + part2 + "ium");
         }
 
-        private static String generateDefaultName(String a, String b) {
-            String partA = a.substring(0, Math.min(3, a.length()));
-            String partB = b.substring(0, Math.min(3, b.length()));
-            String suffix = COMMON_SUFFIXES[(partA.hashCode() + partB.hashCode()) % COMMON_SUFFIXES.length];
+        private static String generateDefaultName(String a, String b, String suffix) {
+            String partA = getMeaningfulPart(a);
+            String partB = getMeaningfulPart(b);
             return capitalize(partA + partB + suffix);
         }
 
@@ -404,16 +349,21 @@ public class ComboItem {
         }
 
         private static String blendNamesLinguistically(String name1, String name2) {
-            // Find the best overlapping syllable
-            int overlap = findBestOverlap(name1, name2);
+            // Clean names by removing common suffixes
+            String clean1 = removeCommonSuffixes(name1);
+            String clean2 = removeCommonSuffixes(name2);
 
-            if (overlap > 1) {
-                // Merge at overlapping point
-                return name1.substring(0, name1.length() - overlap) + name2;
+            // Try to find natural blending points
+            int overlap = findBestOverlap(clean1, clean2);
+
+            if (overlap >= 2) {
+                // Good overlap found - blend at this point
+                return clean1.substring(0, clean1.length() - overlap) + clean2;
             } else {
-                // Take first half of first name and second half of second name
-                return name1.substring(0, name1.length()/2) +
-                        name2.substring(name2.length()/2);
+                // No good overlap - take first half of first and second half of second
+                int split1 = clean1.length() / 2;
+                int split2 = clean2.length() / 2;
+                return clean1.substring(0, split1) + clean2.substring(split2);
             }
         }
 
@@ -429,10 +379,20 @@ public class ComboItem {
             return 0;
         }
 
-        private static String determineSuffix(Item a, Item b) {
-            float avgHardness = (a.hardness + b.hardness) / 2f;
-            float avgFlammability = (a.flammability + b.flammability) / 2f;
-            float avgRadioactivity = (a.radioactivity + b.radioactivity) / 2f;
+        private static String determineSuffix(Object a0, Object b0) {
+
+            var aHard = (a0 instanceof Item item) ? item.hardness : (a0 instanceof ComboItem comboItem) ? comboItem.hardness : 0;
+            var bHard = (b0 instanceof Item item) ? item.hardness : (b0 instanceof ComboItem comboItem) ? comboItem.hardness : 0;
+
+            var aflame = (a0 instanceof Item item) ? item.flammability : (a0 instanceof ComboItem comboItem) ? comboItem.flammability : 0;
+            var bflame = (b0 instanceof Item item) ? item.flammability : (b0 instanceof ComboItem comboItem) ? comboItem.flammability : 0;
+
+            var aradio = (a0 instanceof Item item) ? item.radioactivity : (a0 instanceof ComboItem comboItem) ? comboItem.radioactivity : 0;
+            var bradio = (b0 instanceof Item item) ? item.radioactivity : (b0 instanceof ComboItem comboItem) ? comboItem.radioactivity : 0;
+
+            float avgHardness = (aHard + bHard) / 2f;
+            float avgFlammability = (aflame + bflame) / 2f;
+            float avgRadioactivity = (aradio + bradio) / 2f;
 
             if (avgRadioactivity > 0.7f) return "ite";
             if (avgFlammability > 0.5f) return "ene";

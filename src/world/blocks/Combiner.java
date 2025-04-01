@@ -16,6 +16,8 @@ import mindustry.world.Block;
 import world.modules.ComboItemModule;
 import world.type.*;
 
+import java.util.Objects;
+
 import static mindustry.Vars.content;
 
 public class Combiner extends ComboBlock {
@@ -52,16 +54,16 @@ public class Combiner extends ComboBlock {
                     t.row();
 
                     t.table(a -> {
-                        if (output.item1 != null) a.image(output.item1.fullIcon).pad(4f);
-                        else if (output.item1c != null) a.image(output.item1c.fullIcon).pad(4f);
+                        if (select0 != null) a.image(select0.fullIcon).pad(4f);
+                        else if (select0c != null) a.image(select0c.fullIcon).color(select0c.color).pad(4f);
 
                         a.add("+").pad(4f);
-                        if (output.item2 != null) a.image(output.item2.fullIcon).pad(4f);
-                        else if (output.item2c != null) a.image(output.item2c.fullIcon).pad(4f);
+                        if (select1 != null) a.image(select1.fullIcon).pad(4f);
+                        else if (select1c != null) a.image(select1c.fullIcon).color(select1c.color).pad(4f);
 
                         a.image(Icon.rightSmall).pad(4f);
                         if (output.item1 != null) a.image(output.item1.fullIcon).color(output.color).pad(4f);
-                        else if (output.item1c != null) a.image(output.item1c.fullIcon).pad(4f);
+                        else if (output.item1c != null) a.image(output.item1c.fullIcon).color(output.item1c.color).pad(4f);
 
                     }).growX().get().setFillParent(true);
                 }
@@ -112,8 +114,8 @@ public class Combiner extends ComboBlock {
 
             if (items.any() && items != null) {
                 for (Item item : content.items()) {
-                    if (select0 == null && items.has(item) && item != select1) select0 = item;
-                    if (select1 == null && items.has(item) && item != select0) select1 = item;
+                    if (select0 == null && items.has(item) && select0c == null && item != select1) select0 = item;
+                    if (select1 == null && items.has(item) && select1c == null && item != select0) select1 = item;
                 }
 
                 if ((select0 != null && !items.has(select0))) select0 = null;
@@ -124,12 +126,12 @@ public class Combiner extends ComboBlock {
 
             if (combos.any() && combos != null) {
                 for (ComboItemStack itemc : combos.items) {
-                    if (select0c == null && combos.has(itemc.item) && !itemc.equals(select1c)) select0c = itemc.item;
-                    if (select1c == null && combos.has(itemc.item) && !itemc.equals(select0c)) select1c = itemc.item;
+                    if (select0c == null && combos.has(itemc.item) && select0 == null && (select1c == null || (select1c != null && !Objects.equals(itemc.item.name, select1c.name)))) select0c = itemc.item;
+                    if (select1c == null && combos.has(itemc.item) && select1 == null && (select0c == null || (select0c != null && !Objects.equals(itemc.item.name, select0c.name)))) select1c = itemc.item;
                 }
 
-                if ((select0c != null && !combos.has(select0c)) || select0 != null) select0c = null;
-                if ((select1c != null && !combos.has(select1c)) || select1 != null) select1c = null;
+                if (select0c != null && !combos.has(select0c)) select0c = null;
+                if (select1c != null && !combos.has(select1c)) select1c = null;
             } else {
                 select0c = select1c = null;
             }
@@ -137,7 +139,7 @@ public class Combiner extends ComboBlock {
 
         @Override
         public boolean acceptCombo(Building source, ComboItem item) {
-            return true;
+            return this.combos.get(item) < this.getMaximumAccepted(item);
         }
 
         @Override
@@ -162,8 +164,8 @@ public class Combiner extends ComboBlock {
             if (select0 != null) Draw.rect(select0.fullIcon, x - 2 * size, y);
             if (select1 != null) Draw.rect(select1.fullIcon, x + 2 * size, y);
 
-            if (select0c != null) select0c.draw(x - 2 * size, y, 6f);
-            if (select1c != null) select1c.draw(x + 2 * size, y, 6f);
+            if (select0c != null) select0c.draw(x - 2 * size, y, 7f);
+            if (select1c != null) select1c.draw(x + 2 * size, y, 7f);
         }
     }
 }

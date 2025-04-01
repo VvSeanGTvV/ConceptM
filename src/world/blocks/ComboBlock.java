@@ -93,5 +93,9 @@ public class ComboBlock extends Block {
             Tmp.p1.rotate(rotation);
             return nearby(Tmp.p1.x, Tmp.p1.y);
         }
+
+        public int getMaximumAccepted(ComboItem item) {
+            return this.block.itemCapacity;
+        }
     }
 }
