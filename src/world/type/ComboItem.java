@@ -192,17 +192,17 @@ public class ComboItem {
         private final Map<String, String> generatedNames = new HashMap<>();
 
         public String getNameFor(Item a, Item b) {
-            String key = generateRegistryKey(a.name, b.name);
+            String key = generateRegistryKey(a.localizedName, b.localizedName);
             return generatedNames.computeIfAbsent(key, k -> DynamicNameGenerator.generateName(a, b));
         }
 
         public String getNameFor(ComboItem a, Item b) {
-            String key = generateRegistryKey(a.name, b.name);
+            String key = generateRegistryKey(a.name, b.localizedName);
             return generatedNames.computeIfAbsent(key, k -> DynamicNameGenerator.generateName(a, b));
         }
 
         public String getNameFor(Item a, ComboItem b) {
-            String key = generateRegistryKey(a.name, b.name);
+            String key = generateRegistryKey(a.localizedName, b.name);
             return generatedNames.computeIfAbsent(key, k -> DynamicNameGenerator.generateName(a, b));
         }
 
@@ -268,8 +268,8 @@ public class ComboItem {
 
         public static String generateName(Object a, Object b) {
             // First try linguistic blending
-            var ia = (a instanceof Item i0) ? i0.localizedName : (a instanceof ComboItem c0) ? c0.localizedName : null;
-            var ib = (b instanceof Item i1) ? i1.localizedName : (b instanceof ComboItem c1) ? c1.localizedName : null;
+            var ia = (a instanceof Item i0) ? i0.localizedName : (a instanceof ComboItem c0) ? c0.name : null;
+            var ib = (b instanceof Item i1) ? i1.localizedName : (b instanceof ComboItem c1) ? c1.name : null;
             String blended = blendNamesLinguistically(ia, ib);
             if (isGoodBlend(blended)) {
                 return blended;
