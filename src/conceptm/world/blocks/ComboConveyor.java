@@ -1,4 +1,4 @@
-package world.blocks;
+package conceptm.world.blocks;
 
 import arc.Core;
 import arc.func.*;
@@ -21,7 +21,7 @@ import mindustry.world.*;
 import mindustry.world.blocks.*;
 import mindustry.world.blocks.distribution.*;
 import mindustry.world.meta.*;
-import world.type.ComboItem;
+import conceptm.world.type.ComboItem;
 
 import static mindustry.Vars.tilesize;
 

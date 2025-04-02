@@ -2,14 +2,14 @@ set stage=0
 set builded=0
 set copied=0
 @echo off
-set buildLocation=D:\user\Documents\GitHub\ConceptM\build\libs\ConceptMDesktop.jar
+set buildLocation=..\build\libs\ConceptMDesktop.jar
 
 
 :START
 cls
 title Gradlew Auto Run w/ Modified gradlew.bat
 echo Gradlew Auto Run w/ Modified gradlew.bat
-echo Created by VvSeanGtvV [ 2.1J ]
+echo Created by VvSeanGtvV [ 2.12J ]
 if %builded%==0 echo ^> :buildJar [ PROGRESS ]
 if %stage%==0 goto buildJar
 if %builded%==1 echo ^> :buildJar [ COMPLETE ]
@@ -27,9 +27,10 @@ set builded=1
 goto START
 
 :copyJar
-set modsLocation=C:\Users\user\AppData\Roaming\Mindustry\mods
-
-copy %buildLocation% %modsLocation%
+set modsLocation=%APPDATA%\Mindustry\mods
+cd build\libs\
+copy ConceptMDesktop.jar %modsLocation%
+cd ..\..\
 echo set modsLocation=%modsLocation%
 echo set buildLocation=%buildLocation%
 if exist %buildLocation% del %buildLocation%
@@ -39,7 +40,7 @@ goto START
 
 :executeMindustry
 title Mindustry
-set mindustry=D:\user\Downloads\mindustry-windows-64-bit\Mindustry.exe
+set mindustry=C:\Users\gombo\Downloads\Mindustry-BE-Desktop-25706.jar
 echo autorun to %mindustry%
 set stage=3
 %mindustry%

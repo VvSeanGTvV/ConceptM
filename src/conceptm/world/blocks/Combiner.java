@@ -1,23 +1,17 @@
-package world.blocks;
+package conceptm.world.blocks;
 
 import arc.graphics.g2d.Draw;
-import arc.scene.style.*;
-import arc.scene.ui.*;
 import arc.scene.ui.layout.Table;
-import arc.struct.Seq;
-import arc.util.*;
-import conceptm.ModTemplate;
-import mindustry.Vars;
+import conceptm.world.type.ComboItem;
+import conceptm.world.type.ComboItemStack;
 import mindustry.gen.*;
-import mindustry.graphics.Pal;
 import mindustry.type.Item;
 import mindustry.ui.Styles;
-import mindustry.world.Block;
-import world.modules.ComboItemModule;
-import world.type.*;
+import conceptm.world.type.*;
 
 import java.util.Objects;
 
+import static conceptm.ModTemplate.ui;
 import static mindustry.Vars.content;
 
 public class Combiner extends ComboBlock {
@@ -71,9 +65,12 @@ public class Combiner extends ComboBlock {
                     a.image(Icon.rightSmall).pad(4f);
                     if (output != null) a.image(output.fullIcon).color(output.color).pad(4f);
                     else a.add("?").pad(4f);
+
+                    if (output != null) a.button("?", Styles.flatBordert, () -> ui.content.showItem(output)).size(40f).pad(10).right().grow();
                 }).growX().padTop(16f).get().setFillParent(true);
-                    
             }).growX().center().get().background(Styles.black8).setFillParent(true);
+
+
         }
 
         @Override

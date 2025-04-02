@@ -1,9 +1,11 @@
-package world.type;
+package conceptm.world.type;
 
 import arc.Core;
 import arc.graphics.*;
 import arc.graphics.g2d.*;
 import mindustry.type.Item;
+import mindustry.world.meta.Stat;
+import mindustry.world.meta.Stats;
 
 import java.util.*;
 
@@ -11,6 +13,9 @@ public class ComboItem {
 
     public String name;
     public Color color;
+
+    /** Stat storage for this content. Initialized on creation. */
+    public Stats stats = new Stats();
 
     /** how explosive this item is. */
     public float explosiveness = 0f;
@@ -42,95 +47,65 @@ public class ComboItem {
 
     public TextureRegion fullIcon;
 
-    public ComboItem(String name, Item item1, Item item2) {
-        this.color = blendColorsVibrant(item1.color, item2.color); // Using smart blending
-        this.item1 = item1;
-        this.item2 = item2;
+    public ComboItem(String name, Object a0, Object b0){
+        var aHard = (a0 instanceof Item item) ? item.hardness : (a0 instanceof ComboItem comboItem) ? comboItem.hardness : 0;
+        var bHard = (b0 instanceof Item item) ? item.hardness : (b0 instanceof ComboItem comboItem) ? comboItem.hardness : 0;
+        var aflame = (a0 instanceof Item item) ? item.flammability : (a0 instanceof ComboItem comboItem) ? comboItem.flammability : 0;
+        var bflame = (b0 instanceof Item item) ? item.flammability : (b0 instanceof ComboItem comboItem) ? comboItem.flammability : 0;
+        var aradio = (a0 instanceof Item item) ? item.radioactivity : (a0 instanceof ComboItem comboItem) ? comboItem.radioactivity : 0;
+        var bradio = (b0 instanceof Item item) ? item.radioactivity : (b0 instanceof ComboItem comboItem) ? comboItem.radioactivity : 0;
+        var acharge = (a0 instanceof Item item) ? item.charge : (a0 instanceof ComboItem comboItem) ? comboItem.charge : 0;
+        var bcharge = (b0 instanceof Item item) ? item.charge : (b0 instanceof ComboItem comboItem) ? comboItem.charge : 0;
+        var aexplode = (a0 instanceof Item item) ? item.explosiveness : (a0 instanceof ComboItem comboItem) ? comboItem.explosiveness : 0;
+        var bexplode = (b0 instanceof Item item) ? item.explosiveness : (b0 instanceof ComboItem comboItem) ? comboItem.explosiveness : 0;
+        var acost = (a0 instanceof Item item) ? item.cost : (a0 instanceof ComboItem comboItem) ? comboItem.cost : 0;
+        var bcost = (b0 instanceof Item item) ? item.cost : (b0 instanceof ComboItem comboItem) ? comboItem.cost : 0;
+        var ascale = (a0 instanceof Item item) ? item.healthScaling : (a0 instanceof ComboItem comboItem) ? comboItem.healthScaling : 0;
+        var bscale = (b0 instanceof Item item) ? item.healthScaling : (b0 instanceof ComboItem comboItem) ? comboItem.healthScaling : 0;
 
         // Combine numeric properties (average them)
-        this.hardness = (item1.hardness + item2.hardness) / 2;
-        this.charge = (item1.charge + item2.charge) / 2;
-        this.radioactivity = (item1.radioactivity + item2.radioactivity) / 2;
-        this.flammability = (item1.flammability + item2.flammability) / 2;
-        this.explosiveness = (item1.explosiveness + item2.explosiveness) / 2;
-        this.cost = (item1.cost + item2.cost) / 2;
-        this.healthScaling = (item1.healthScaling + item2.healthScaling) / 2;
+        int div = 1;
+        this.hardness = (aHard + bHard) / div;
+        this.charge = (acharge + bcharge) / div;
+        this.radioactivity = (aradio + bradio) / div;
+        this.flammability = (aflame + bflame) / div;
+        this.explosiveness = (aexplode + bexplode) / div;
+        this.cost = (acost + bcost) / div;
+        this.healthScaling = (ascale + bscale) / div;
 
-        // Combine boolean properties (OR operation)
-        this.lowPriority = item1.lowPriority || item2.lowPriority;
-        this.buildable = item1.buildable || item2.buildable;
+        item1 = (a0 instanceof Item item) ? item : null;
+        item2 = (b0 instanceof Item item) ? item : null;
+
+        item1c = (a0 instanceof ComboItem item) ? item : null;
+        item2c = (b0 instanceof ComboItem item) ? item : null;
+
+        List<Boolean> boolList = Arrays.asList(
+                item1 != null && item1.lowPriority,
+                item2 != null && item2.lowPriority,
+                item1c != null && item1c.lowPriority,
+                item2c != null && item2c.lowPriority
+                );
+        this.lowPriority = boolList.stream().reduce(false, Boolean::logicalOr);
+
+        boolList = Arrays.asList(
+                item1 != null && item1.buildable,
+                item2 != null && item2.buildable,
+                item1c != null && item1c.buildable,
+                item2c != null && item2c.buildable
+        );
+        this.buildable = boolList.stream().reduce(false, Boolean::logicalOr);
+
+        this.color = blendColorsVibrant(
+                (item1 != null) ? item1.color : item1c.color,
+                (item2 != null) ? item2.color : item2c.color
+        );
+
         this.name = name;
-
-        createIcons(item1, item2, null, null);
+        createIcons(item1, item2, item1c, item2c);
+        setStats();
     }
 
-    public ComboItem(String name, ComboItem item1, Item item2) {
-        this.color = blendColorsVibrant(item1.color, item2.color); // Using smart blending
-        this.item1c = item1;
-        this.item2 = item2;
-
-        // Combine numeric properties (average them)
-        this.hardness = (item1.hardness + item2.hardness) / 2;
-        this.charge = (item1.charge + item2.charge) / 2;
-        this.radioactivity = (item1.radioactivity + item2.radioactivity) / 2;
-        this.flammability = (item1.flammability + item2.flammability) / 2;
-        this.explosiveness = (item1.explosiveness + item2.explosiveness) / 2;
-        this.cost = (item1.cost + item2.cost) / 2;
-        this.healthScaling = (item1.healthScaling + item2.healthScaling) / 2;
-
-        // Combine boolean properties (OR operation)
-        this.lowPriority = item1.lowPriority || item2.lowPriority;
-        this.buildable = item1.buildable || item2.buildable;
-        this.name = name;
-
-        createIcons(null, item2, item1, null);
-    }
-
-    public ComboItem(String name, Item item1, ComboItem item2) {
-        this.color = blendColorsVibrant(item1.color, item2.color); // Using smart blending
-        this.item1 = item1;
-        this.item2c = item2;
-
-        // Combine numeric properties (average them)
-        this.hardness = (item1.hardness + item2.hardness) / 2;
-        this.charge = (item1.charge + item2.charge) / 2;
-        this.radioactivity = (item1.radioactivity + item2.radioactivity) / 2;
-        this.flammability = (item1.flammability + item2.flammability) / 2;
-        this.explosiveness = (item1.explosiveness + item2.explosiveness) / 2;
-        this.cost = (item1.cost + item2.cost) / 2;
-        this.healthScaling = (item1.healthScaling + item2.healthScaling) / 2;
-
-        // Combine boolean properties (OR operation)
-        this.lowPriority = item1.lowPriority || item2.lowPriority;
-        this.buildable = item1.buildable || item2.buildable;
-        this.name = name;
-
-        createIcons(item1, null, null, item2);
-    }
-
-    public ComboItem(String name, ComboItem item1, ComboItem item2) {
-        this.color = blendColorsVibrant(item1.color, item2.color); // Using smart blending
-        this.item1c = item1;
-        this.item2c = item2;
-
-        // Combine numeric properties (average them)
-        this.hardness = (item1.hardness + item2.hardness) / 2;
-        this.charge = (item1.charge + item2.charge) / 2;
-        this.radioactivity = (item1.radioactivity + item2.radioactivity) / 2;
-        this.flammability = (item1.flammability + item2.flammability) / 2;
-        this.explosiveness = (item1.explosiveness + item2.explosiveness) / 2;
-        this.cost = (item1.cost + item2.cost) / 2;
-        this.healthScaling = (item1.healthScaling + item2.healthScaling) / 2;
-
-        // Combine boolean properties (OR operation)
-        this.lowPriority = item1.lowPriority || item2.lowPriority;
-        this.buildable = item1.buildable || item2.buildable;
-        this.name = name;
-
-        createIcons(null, null, item1, item2);
-    }
-
-    public ComboItem(Item item1, Item item2) {
+    public ComboItem(Object item1, Object item2) {
         this(
                 nameRegistry.getNameFor(item1, item2),
                 item1,
@@ -138,28 +113,11 @@ public class ComboItem {
         );
     }
 
-    public ComboItem(ComboItem item1, Item item2) {
-        this(
-                nameRegistry.getNameFor(item1, item2),
-                item1,
-                item2
-        );
-    }
-
-    public ComboItem(Item item1, ComboItem item2) {
-        this(
-                nameRegistry.getNameFor(item1, item2),
-                item1,
-                item2
-        );
-    }
-
-    public ComboItem(ComboItem item1, ComboItem item2) {
-        this(
-                nameRegistry.getNameFor(item1, item2),
-                item1,
-                item2
-        );
+    public void setStats() {
+        stats.addPercent(Stat.explosiveness, explosiveness);
+        stats.addPercent(Stat.flammability, flammability);
+        stats.addPercent(Stat.radioactivity, radioactivity);
+        stats.addPercent(Stat.charge, charge);
     }
 
     public void draw(float x, float y, float size) {
@@ -191,23 +149,10 @@ public class ComboItem {
     public static class NameRegistry {
         private final Map<String, String> generatedNames = new HashMap<>();
 
-        public String getNameFor(Item a, Item b) {
-            String key = generateRegistryKey(a.localizedName, b.localizedName);
-            return generatedNames.computeIfAbsent(key, k -> DynamicNameGenerator.generateName(a, b));
-        }
-
-        public String getNameFor(ComboItem a, Item b) {
-            String key = generateRegistryKey(a.name, b.localizedName);
-            return generatedNames.computeIfAbsent(key, k -> DynamicNameGenerator.generateName(a, b));
-        }
-
-        public String getNameFor(Item a, ComboItem b) {
-            String key = generateRegistryKey(a.localizedName, b.name);
-            return generatedNames.computeIfAbsent(key, k -> DynamicNameGenerator.generateName(a, b));
-        }
-
-        public String getNameFor(ComboItem a, ComboItem b) {
-            String key = generateRegistryKey(a.name, b.name);
+        public String getNameFor(Object a, Object b) {
+            String an = (a instanceof Item ai) ? ai.localizedName : (a instanceof ComboItem ac) ? ac.name : "";
+            String bn = (a instanceof Item bi) ? bi.localizedName : (a instanceof ComboItem bc) ? bc.name : "";
+            String key = generateRegistryKey(an, bn);
             return generatedNames.computeIfAbsent(key, k -> DynamicNameGenerator.generateName(a, b));
         }
 

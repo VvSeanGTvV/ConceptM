@@ -1,13 +1,7 @@
 package conceptm;
 
-import arc.Core;
-import arc.graphics.*;
-import arc.graphics.g2d.*;
-import arc.struct.*;
-import arc.util.Structs;
-import mindustry.Vars;
-import mindustry.graphics.MultiPacker;
-import mindustry.graphics.MultiPacker.*;
+import conceptm.content.ConceptBlocks;
+import conceptm.core.exUI;
 import mindustry.mod.*;
 import conceptm.gen.*;
 
@@ -18,9 +12,14 @@ public class ModTemplate extends Mod{
     public static String internalMod = "concept-m";
     public static Mods.LoadedMod mod;
 
+    public static exUI ui;
+
     @Override
     public void init() {
         mod = mods.locateMod(internalMod);
+        ui = new exUI();
+
+        ui.init();
     }
 
     @Override

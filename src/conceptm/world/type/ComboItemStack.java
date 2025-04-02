@@ -1,9 +1,8 @@
-package world.type;
+package conceptm.world.type;
 
 import arc.math.Mathf;
 import arc.struct.Seq;
 import mindustry.content.Items;
-import mindustry.type.*;
 
 public class ComboItemStack{
     public static final ComboItemStack[] empty = {};

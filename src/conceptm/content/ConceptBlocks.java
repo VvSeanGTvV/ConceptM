@@ -1,9 +1,10 @@
-package conceptm;
+package conceptm.content;
 
+import conceptm.world.blocks.Combiner;
+import conceptm.world.blocks.ComboConveyor;
 import mindustry.content.Items;
 import mindustry.type.Category;
 import mindustry.world.Block;
-import world.blocks.*;
 
 import static mindustry.type.ItemStack.with;
 

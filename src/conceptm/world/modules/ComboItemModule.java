@@ -1,8 +1,7 @@
-package world.modules;
+package conceptm.world.modules;
 
 import arc.struct.Seq;
-import world.blocks.Combiner;
-import world.type.*;
+import conceptm.world.type.*;
 
 public class ComboItemModule {
     public Seq<ComboItemStack> items = new Seq<>();
