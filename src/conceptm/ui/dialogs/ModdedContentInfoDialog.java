@@ -20,6 +20,7 @@ import mindustry.ui.Styles;
 import static arc.Core.keybinds;
 import static arc.Core.settings;
 import static mindustry.Vars.iconXLarge;
+import static conceptm.ModTemplate.ui;
 
 public class ModdedContentInfoDialog extends BaseDialog {
 
