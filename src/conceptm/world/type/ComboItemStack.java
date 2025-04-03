@@ -18,7 +18,7 @@ public class ComboItemStack{
 
     //serialization only
     public ComboItemStack(){
-        //prevent nulls.
+        //prevent nulls. +default
         item = new ComboItem(Items.copper, Items.lead);
     }
 

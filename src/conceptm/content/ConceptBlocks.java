@@ -18,6 +18,7 @@ public class ConceptBlocks {
 
     public static void load(){
         Combine = new Combiner("test-combine"){{
+            comboCapacity = 10;
             requirements(Category.distribution, with(Items.copper, 1));
             size = 2;
         }};
@@ -25,7 +26,7 @@ public class ConceptBlocks {
         ComboGen = new ConsumeComboGenerator("test-combine-gen"){{
             requirements(Category.distribution, with(Items.copper, 1));
 
-            powerProduction = 1f;
+            powerProduction = 1.25f;
             itemDuration = 120f;
 
             ambientSound = Sounds.smelter;

@@ -44,7 +44,7 @@ public class ModdedContentInfoDialog extends BaseDialog {
 
         table.table(title1 -> {
             title1.image(Item.fullIcon).size(iconXLarge).scaling(Scaling.fit).color(Item.color);
-            title1.add("[accent]" + Item.name + (settings.getBool("console") ? "\n[gray]" + Item.name : "")).padLeft(5);
+            title1.add("[accent]" + Item.localizedName + (settings.getBool("console") ? "\n[gray]" + Item.name : "")).padLeft(5);
         });
 
         table.row();

@@ -3,12 +3,14 @@ package conceptm.world.modules;
 import arc.struct.Seq;
 import conceptm.world.type.*;
 
+import java.util.Objects;
+
 public class ComboItemModule {
     public Seq<ComboItemStack> items = new Seq<>();
     public int total = 0;
 
     public int get(ComboItem item){
-        var c = items.find(comboItems -> comboItems.item == item);
+        var c = items.find(comboItems -> Objects.equals(comboItems.item.name, item.name));
         if (c == null) return 0;
         return c.amount;
     }
@@ -38,14 +40,14 @@ public class ComboItemModule {
     }
 
     public void add(ComboItem item, int amount){
-        ComboItemStack last = items.find(comboItems -> comboItems.item == item);
+        ComboItemStack last = items.find(comboItems -> Objects.equals(comboItems.item.name, item.name));
         if (last != null) last.set(last.item, last.amount + amount);
         else items.add(new ComboItemStack(item, amount));
         total += amount;
     }
 
     public void remove(ComboItem item, int amount){
-        ComboItemStack last = items.find(comboItems -> comboItems.item == item);
+        ComboItemStack last = items.find(comboItems -> Objects.equals(comboItems.item.name, item.name));
         if (last != null) {
             last.set(last.item, last.amount - amount);
             if (last.amount <= 0) items.remove(last);

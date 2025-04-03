@@ -11,7 +11,7 @@ import java.util.*;
 
 public class ComboItem {
 
-    public String name;
+    public String localizedName, name;
     public Color color;
 
     /** Stat storage for this content. Initialized on creation. */
@@ -64,7 +64,7 @@ public class ComboItem {
         var bscale = (b0 instanceof Item item) ? item.healthScaling : (b0 instanceof ComboItem comboItem) ? comboItem.healthScaling : 0;
 
         // Combine numeric properties (average them)
-        int div = 1;
+        int div = 2;
         this.hardness = (aHard + bHard) / div;
         this.charge = (acharge + bcharge) / div;
         this.radioactivity = (aradio + bradio) / div;
@@ -100,7 +100,12 @@ public class ComboItem {
                 (item2 != null) ? item2.color : item2c.color
         );
 
-        this.name = name;
+        this.localizedName = name;
+
+        String an = (a0 instanceof Item ai) ? ai.localizedName : (a0 instanceof ComboItem ac) ? ac.localizedName : "";
+        String bn = (b0 instanceof Item bi) ? bi.localizedName : (b0 instanceof ComboItem bc) ? bc.localizedName : "";
+
+        this.name = nameRegistry.generateRegistryKey(an, bn);
         createIcons(item1, item2, item1c, item2c);
         setStats();
     }
@@ -150,8 +155,8 @@ public class ComboItem {
         private final Map<String, String> generatedNames = new HashMap<>();
 
         public String getNameFor(Object a, Object b) {
-            String an = (a instanceof Item ai) ? ai.localizedName : (a instanceof ComboItem ac) ? ac.name : "";
-            String bn = (a instanceof Item bi) ? bi.localizedName : (a instanceof ComboItem bc) ? bc.name : "";
+            String an = (a instanceof Item ai) ? ai.localizedName : (a instanceof ComboItem ac) ? ac.localizedName : "";
+            String bn = (b instanceof Item bi) ? bi.localizedName : (b instanceof ComboItem bc) ? bc.localizedName : "";
             String key = generateRegistryKey(an, bn);
             return generatedNames.computeIfAbsent(key, k -> DynamicNameGenerator.generateName(a, b));
         }
@@ -213,8 +218,8 @@ public class ComboItem {
 
         public static String generateName(Object a, Object b) {
             // First try linguistic blending
-            var ia = (a instanceof Item i0) ? i0.localizedName : (a instanceof ComboItem c0) ? c0.name : null;
-            var ib = (b instanceof Item i1) ? i1.localizedName : (b instanceof ComboItem c1) ? c1.name : null;
+            var ia = (a instanceof Item i0) ? i0.localizedName : (a instanceof ComboItem c0) ? c0.localizedName : null;
+            var ib = (b instanceof Item i1) ? i1.localizedName : (b instanceof ComboItem c1) ? c1.localizedName : null;
             String blended = blendNamesLinguistically(ia, ib);
             if (isGoodBlend(blended)) {
                 return blended;
@@ -244,7 +249,7 @@ public class ComboItem {
                     return MaterialType.METAL;
                 } else if (a.hardness > 5 && a.radioactivity < 0.2f) {
                     return MaterialType.CRYSTAL;
-                } else if (a.flammability > 0.5f || a.name.contains("flesh")) {
+                } else if (a.flammability > 0.5f || a.localizedName.contains("flesh")) {
                     return MaterialType.ORGANIC;
                 }
             }
@@ -254,7 +259,7 @@ public class ComboItem {
                     return MaterialType.METAL;
                 } else if (a.hardness > 5 && a.radioactivity < 0.2f) {
                     return MaterialType.CRYSTAL;
-                } else if (a.flammability > 0.5f || a.name.contains("flesh")) {
+                } else if (a.flammability > 0.5f || a.localizedName.contains("flesh")) {
                     return MaterialType.ORGANIC;
                 }
             }

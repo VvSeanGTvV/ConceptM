@@ -42,7 +42,7 @@ public class Combiner extends ComboBlock {
         public void buildConfiguration(Table table) {
             table.table(t -> {
                 if (output != null) {
-                    t.add(output.name, Styles.defaultLabel).pad(4f);
+                    t.add(output.localizedName, Styles.defaultLabel).pad(4f);
                     t.row();
                     //t.image(Styles.black8).fillX().height(3.0F).pad(3.0F).row();
                     t.row();

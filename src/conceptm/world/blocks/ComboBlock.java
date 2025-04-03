@@ -20,10 +20,11 @@ public class ComboBlock extends Block {
     }
 
     @Override
-    public void setStats() {
-        super.setStats();
-        if (this.hasCombo) {
-            this.addBar("combos", (ComboBuilding entity) -> new Bar(() -> Core.bundle.format("bar.combos", new Object[]{entity.combos.total()}), () -> Pal.items, () -> (float)entity.combos.total() / (float)this.comboCapacity));
+    public void setBars() {
+        super.setBars();
+
+        if (this.hasCombo && this.configurable) {
+            this.addBar("combos", (ComboBuilding entity) -> new Bar(() -> Core.bundle.format("bar.combos", entity.combos.total()), () -> Pal.items, () -> (float)entity.combos.total() / (float)this.comboCapacity));
         }
     }
 
