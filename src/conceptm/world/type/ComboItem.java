@@ -64,14 +64,14 @@ public class ComboItem {
         var bscale = (b0 instanceof Item item) ? item.healthScaling : (b0 instanceof ComboItem comboItem) ? comboItem.healthScaling : 0;
 
         // Combine numeric properties (average them)
-        int div = 2;
+        float div = 1.5f;
         this.hardness = (aHard + bHard);
-        this.charge = (acharge + bcharge) / acost;
-        this.radioactivity = (aradio + bradio) / acost;
-        this.flammability = (aflame + bflame) / acost;
-        this.explosiveness = (aexplode + bexplode) / acost;
+        this.charge = (acharge + bcharge) / div;
+        this.radioactivity = (aradio + bradio) / div;
+        this.flammability = (aflame + bflame) / div;
+        this.explosiveness = (aexplode + bexplode + this.flammability) / div;
         this.cost = (acost + bcost);
-        this.healthScaling = (ascale + bscale) / acost;
+        this.healthScaling = (ascale + bscale);
 
         item1 = (a0 instanceof Item item) ? item : null;
         item2 = (b0 instanceof Item item) ? item : null;
