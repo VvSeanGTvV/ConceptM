@@ -52,7 +52,7 @@ public class ModdedContentInfoDialog extends BaseDialog {
             if (Item.item1 != null) a.image(Item.item1.fullIcon).pad(4f);
             else if (Item.item1c != null) {
                 a.image(Item.item1c.fullIcon).color(Item.item1c.color).pad(4f);
-              ela.button("?", Styles.flatBordert, () -> ui.content.showItem(Item.item1c)).size(40f).pad(10).right().grow();
+                a.button("?", Styles.flatBordert, () -> ui.content.showItem(Item.item1c)).size(40f).pad(10).right().grow();
             }
             else a.add("?").pad(4f);
 
