@@ -58,20 +58,20 @@ public class ComboItem {
         var bcharge = (b0 instanceof Item item) ? item.charge : (b0 instanceof ComboItem comboItem) ? comboItem.charge : 0;
         var aexplode = (a0 instanceof Item item) ? item.explosiveness : (a0 instanceof ComboItem comboItem) ? comboItem.explosiveness : 0;
         var bexplode = (b0 instanceof Item item) ? item.explosiveness : (b0 instanceof ComboItem comboItem) ? comboItem.explosiveness : 0;
-        var acost = (a0 instanceof Item item) ? item.cost : (a0 instanceof ComboItem comboItem) ? comboItem.cost : 0;
-        var bcost = (b0 instanceof Item item) ? item.cost : (b0 instanceof ComboItem comboItem) ? comboItem.cost : 0;
+        var acost = (a0 instanceof Item item) ? item.cost : (a0 instanceof ComboItem comboItem) ? comboItem.cost : 1f;
+        var bcost = (b0 instanceof Item item) ? item.cost : (b0 instanceof ComboItem comboItem) ? comboItem.cost : 1f;
         var ascale = (a0 instanceof Item item) ? item.healthScaling : (a0 instanceof ComboItem comboItem) ? comboItem.healthScaling : 0;
         var bscale = (b0 instanceof Item item) ? item.healthScaling : (b0 instanceof ComboItem comboItem) ? comboItem.healthScaling : 0;
 
         // Combine numeric properties (average them)
         int div = 2;
-        this.hardness = (aHard + bHard) / div;
-        this.charge = (acharge + bcharge) / div;
-        this.radioactivity = (aradio + bradio) / div;
-        this.flammability = (aflame + bflame) / div;
-        this.explosiveness = (aexplode + bexplode) / div;
-        this.cost = (acost + bcost) / div;
-        this.healthScaling = (ascale + bscale) / div;
+        this.hardness = (aHard + bHard);
+        this.charge = (acharge + bcharge) / acost;
+        this.radioactivity = (aradio + bradio) / acost;
+        this.flammability = (aflame + bflame) / acost;
+        this.explosiveness = (aexplode + bexplode) / acost;
+        this.cost = (acost + bcost);
+        this.healthScaling = (ascale + bscale) / acost;
 
         item1 = (a0 instanceof Item item) ? item : null;
         item2 = (b0 instanceof Item item) ? item : null;
