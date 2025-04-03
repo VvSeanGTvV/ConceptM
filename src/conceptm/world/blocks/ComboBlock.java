@@ -1,8 +1,11 @@
 package conceptm.world.blocks;
 
+import arc.Core;
 import arc.util.Tmp;
 import mindustry.game.Team;
 import mindustry.gen.Building;
+import mindustry.graphics.Pal;
+import mindustry.ui.Bar;
 import mindustry.world.Block;
 import conceptm.world.modules.ComboItemModule;
 import conceptm.world.type.ComboItem;
@@ -14,6 +17,14 @@ public class ComboBlock extends Block {
 
     public ComboBlock(String name) {
         super(name);
+    }
+
+    @Override
+    public void setStats() {
+        super.setStats();
+        if (this.hasCombo) {
+            this.addBar("combos", (ComboBuilding entity) -> new Bar(() -> Core.bundle.format("bar.combos", new Object[]{entity.combos.total()}), () -> Pal.items, () -> (float)entity.combos.total() / (float)this.comboCapacity));
+        }
     }
 
     public class ComboBuilding extends Building {
@@ -72,7 +83,9 @@ public class ComboBlock extends Block {
             return true;
         }
 
-        public void handleCombo(Building source, ComboItem item) {}
+        public void handleCombo(Building source, ComboItem item) {
+            combos.add(item);
+        }
         public boolean acceptCombo(Building source, ComboItem item) {
             return false;
         }
@@ -93,7 +106,7 @@ public class ComboBlock extends Block {
         }
 
         public int getMaximumAccepted(ComboItem item) {
-            return this.block.itemCapacity;
+            return comboCapacity;
         }
     }
 }

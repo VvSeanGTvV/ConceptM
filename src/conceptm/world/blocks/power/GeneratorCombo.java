@@ -25,6 +25,7 @@ import mindustry.world.Tile;
 import mindustry.world.draw.DrawBlock;
 import mindustry.world.draw.DrawDefault;
 import mindustry.world.meta.BlockFlag;
+import mindustry.world.meta.BlockGroup;
 import mindustry.world.meta.Stat;
 import mindustry.world.meta.StatUnit;
 
@@ -56,6 +57,14 @@ public class GeneratorCombo extends ComboBlock {
         sync = true;
         baseExplosiveness = 5f;
         flags = EnumSet.of(BlockFlag.generator);
+
+        consumesPower = false;
+        outputsPower = true;
+
+        update = true;
+        solid = true;
+        hasPower = true;
+        group = BlockGroup.power;
     }
 
     public float getDisplayedPowerProduction(){

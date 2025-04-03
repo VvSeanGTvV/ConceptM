@@ -146,11 +146,6 @@ public class Combiner extends ComboBlock {
         }
 
         @Override
-        public void handleCombo(Building source, ComboItem item) {
-            combos.add(item);
-        }
-
-        @Override
         public boolean acceptItem(Building source, Item item) {
             return this.items.get(item) < this.getMaximumAccepted(item);
         }

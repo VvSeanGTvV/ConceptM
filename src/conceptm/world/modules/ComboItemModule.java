@@ -5,6 +5,7 @@ import conceptm.world.type.*;
 
 public class ComboItemModule {
     public Seq<ComboItemStack> items = new Seq<>();
+    public int total = 0;
 
     public int get(ComboItem item){
         var c = items.find(comboItems -> comboItems.item == item);
@@ -33,8 +34,14 @@ public class ComboItemModule {
     }
 
     public void add(ComboItem item){
+        add(item, 1);
+    }
+
+    public void add(ComboItem item, int amount){
         ComboItemStack last = items.find(comboItems -> comboItems.item == item);
-        if (last != null) last.set(last.item, last.amount++); else items.add(new ComboItemStack(item, 1));
+        if (last != null) last.set(last.item, last.amount + amount);
+        else items.add(new ComboItemStack(item, amount));
+        total += amount;
     }
 
     public void remove(ComboItem item, int amount){
@@ -42,6 +49,12 @@ public class ComboItemModule {
         if (last != null) {
             last.set(last.item, last.amount - amount);
             if (last.amount <= 0) items.remove(last);
+            total -= amount;
+            if (total < 0) total = 0;
         }
+    }
+
+    public int total() {
+        return total;
     }
 }
