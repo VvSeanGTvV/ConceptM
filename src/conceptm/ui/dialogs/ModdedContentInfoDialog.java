@@ -49,12 +49,18 @@ public class ModdedContentInfoDialog extends BaseDialog {
 
         table.table(a -> {
             if (Item.item1 != null) a.image(Item.item1.fullIcon).pad(4f);
-            else if (Item.item1c != null) a.image(Item.item1c.fullIcon).color(Item.item1c.color).pad(4f);
+            else if (Item.item1c != null) {
+                a.image(Item.item1c.fullIcon).color(Item.item1c.color).pad(4f);
+              ela.button("?", Styles.flatBordert, () -> ui.content.showItem(Item.item1c)).size(40f).pad(10).right().grow();
+            }
             else a.add("?").pad(4f);
 
             a.add("+").pad(4f);
             if (Item.item2 != null) a.image(Item.item2.fullIcon).pad(4f);
-            else if (Item.item2c != null) a.image(Item.item2c.fullIcon).color(Item.item2c.color).pad(4f);
+            else if (Item.item2c != null) {
+                a.image(Item.item2c.fullIcon).color(Item.item2c.color).pad(4f);
+                a.button("?", Styles.flatBordert, () -> ui.content.showItem(Item.item2c)).size(40f).pad(10).right().grow();
+            }
             else a.add("?").pad(4f);
 
             a.image(Icon.rightSmall).pad(4f);
