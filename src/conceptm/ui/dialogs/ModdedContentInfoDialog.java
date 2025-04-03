@@ -15,6 +15,7 @@ import mindustry.world.meta.Stat;
 import mindustry.world.meta.StatCat;
 import mindustry.world.meta.StatValue;
 import mindustry.world.meta.Stats;
+import mindustry.ui.Styles;
 
 import static arc.Core.keybinds;
 import static arc.Core.settings;
