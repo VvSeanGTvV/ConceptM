@@ -53,8 +53,8 @@ public class ConsumeComboGenerator extends GeneratorCombo{
                         a.add(Core.bundle.format("stat.productiontime") + ": ");
                         a.add((int) ((itemDuration * itemDurationMultiplier) / 60) + " " + Core.bundle.format("unit.seconds")).color(Pal.items).left();
                         a.row();
-                        a.add(Core.bundle.format("stat.productiontime") + ": ");
-                        a.add(Mathf.floor((powerProduction * productionEfficiency) * 60) + " " + Core.bundle.format("unit.powersecond")).color(Pal.powerBar).left();
+                        a.add(Core.bundle.format("stat.basepowergeneration") + ": ");
+                        a.add(Mathf.ceil((powerProduction * productionEfficiency) * 60) + " " + Core.bundle.format("unit.powersecond")).color(Pal.powerBar).left();
                     }).pad(10f);
                 }).growX().center().get().background(Styles.black8).setFillParent(true);
             }
