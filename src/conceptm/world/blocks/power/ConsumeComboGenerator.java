@@ -10,6 +10,7 @@ import mindustry.content.Fx;
 import mindustry.entities.Effect;
 import mindustry.gen.Building;
 import mindustry.graphics.Drawf;
+import mindustry.graphics.Pal;
 import mindustry.ui.Styles;
 
 import static conceptm.ModTemplate.ui;
@@ -48,10 +49,12 @@ public class ConsumeComboGenerator extends GeneratorCombo{
                     c.row();
 
                     c.table(a -> {
-                        a.add(Core.bundle.format("stat.productiontime") + ": " + (int) ((itemDuration * itemDurationMultiplier) / 60) + " seconds");
+                        a.add(Core.bundle.format("stat.productiontime") + ": ");
+                        a.add((int) ((itemDuration * itemDurationMultiplier) / 60) + " " + Core.bundle.format("unit.seconds")).color(Pal.items);
                         a.row();
-                        //a.add(Core.bundle.format("stat.basepowergeneration") + (int) );
-                    }).pad(4f);
+                        a.add(Core.bundle.format("stat.productiontime") + ": ");
+                        a.add(Mathf.floor((powerProduction * productionEfficiency) * 60) + " " + Core.bundle.format("unit.powersecond")).color(Pal.accent);
+                    }).pad(10f);
                 }).growX().center().get().background(Styles.black8).setFillParent(true);
             }
         }
