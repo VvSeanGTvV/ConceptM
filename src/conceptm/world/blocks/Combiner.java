@@ -69,8 +69,6 @@ public class Combiner extends ComboBlock {
                     if (output != null) a.button("?", Styles.flatBordert, () -> ui.content.showItem(output)).size(40f).pad(10).right().grow();
                 }).growX().padTop(16f).get().setFillParent(true);
             }).growX().center().get().background(Styles.black8).setFillParent(true);
-
-
         }
 
         @Override

@@ -1,13 +1,18 @@
 package conceptm.world.blocks.power;
 
+import arc.Core;
 import arc.graphics.Color;
 import arc.math.Mathf;
+import arc.scene.ui.layout.Table;
 import arc.util.Time;
 import conceptm.world.type.ComboItem;
 import mindustry.content.Fx;
 import mindustry.entities.Effect;
 import mindustry.gen.Building;
 import mindustry.graphics.Drawf;
+import mindustry.ui.Styles;
+
+import static conceptm.ModTemplate.ui;
 
 public class ConsumeComboGenerator extends GeneratorCombo{
 
@@ -23,11 +28,31 @@ public class ConsumeComboGenerator extends GeneratorCombo{
 
     public ConsumeComboGenerator(String name) {
         super(name);
+
+        configurable = true;
     }
 
     public class ConsumeComboGeneratorBuild extends GeneratorComboBuild{
         public float warmup, totalTime, efficiencyMultiplier = 1f, itemDurationMultiplier = 1;
         public ComboItem item;
+
+        @Override
+        public void buildConfiguration(Table table) {
+            if (item != null) {
+                table.table(t -> {
+                    t.image(item.fullIcon).color(item.color).pad(4f);
+                    t.button("?", Styles.flatBordert, () -> ui.content.showItem(item)).size(40f).pad(10).right().grow();
+                }).pad(4f);
+
+                table.row();
+
+                table.table(a -> {
+                   a.add(Core.bundle.format("stat.productiontime") + (int) ((itemDuration * itemDurationMultiplier) / 60));
+                   a.row();
+                   //a.add(Core.bundle.format("stat.basepowergeneration") + (int) );
+                }).pad(4f);
+            }
+        }
 
         @Override
         public void updateEfficiencyMultiplier(){
