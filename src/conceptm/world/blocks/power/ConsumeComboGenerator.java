@@ -43,6 +43,7 @@ public class ConsumeComboGenerator extends GeneratorCombo{
                 table.table(c -> {
                     c.table(t -> {
                         t.image(item.fullIcon).color(item.color).pad(4f);
+                        t.add(item.localizedName).pad(2f);
                         t.button("?", Styles.flatBordert, () -> ui.content.showItem(item)).size(40f).pad(10).right().grow();
                     }).pad(4f);
 
@@ -50,10 +51,10 @@ public class ConsumeComboGenerator extends GeneratorCombo{
 
                     c.table(a -> {
                         a.add(Core.bundle.format("stat.productiontime") + ": ");
-                        a.add((int) ((itemDuration * itemDurationMultiplier) / 60) + " " + Core.bundle.format("unit.seconds")).color(Pal.items);
+                        a.add((int) ((itemDuration * itemDurationMultiplier) / 60) + " " + Core.bundle.format("unit.seconds")).color(Pal.items).left();
                         a.row();
                         a.add(Core.bundle.format("stat.productiontime") + ": ");
-                        a.add(Mathf.floor((powerProduction * productionEfficiency) * 60) + " " + Core.bundle.format("unit.powersecond")).color(Pal.accent);
+                        a.add(Mathf.floor((powerProduction * productionEfficiency) * 60) + " " + Core.bundle.format("unit.powersecond")).color(Pal.powerBar).left();
                     }).pad(10f);
                 }).growX().center().get().background(Styles.black8).setFillParent(true);
             }
