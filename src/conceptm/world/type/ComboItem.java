@@ -69,7 +69,7 @@ public class ComboItem {
         this.charge = (acharge + bcharge) / div;
         this.radioactivity = (aradio + bradio) / div;
         this.flammability = (aflame + bflame) / div;
-        this.explosiveness = (aexplode + bexplode + this.flammability) / div;
+        this.explosiveness = (aexplode + bexplode) / div;
         this.cost = (acost + bcost);
         this.healthScaling = (ascale + bscale);
 
