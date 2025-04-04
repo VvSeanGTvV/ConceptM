@@ -39,18 +39,20 @@ public class ConsumeComboGenerator extends GeneratorCombo{
         @Override
         public void buildConfiguration(Table table) {
             if (item != null) {
-                table.table(t -> {
-                    t.image(item.fullIcon).color(item.color).pad(4f);
-                    t.button("?", Styles.flatBordert, () -> ui.content.showItem(item)).size(40f).pad(10).right().grow();
-                }).pad(4f);
+                table.table(c -> {
+                    c.table(t -> {
+                        t.image(item.fullIcon).color(item.color).pad(4f);
+                        t.button("?", Styles.flatBordert, () -> ui.content.showItem(item)).size(40f).pad(10).right().grow();
+                    }).pad(4f);
 
-                table.row();
+                    c.row();
 
-                table.table(a -> {
-                   a.add(Core.bundle.format("stat.productiontime") + (int) ((itemDuration * itemDurationMultiplier) / 60));
-                   a.row();
-                   //a.add(Core.bundle.format("stat.basepowergeneration") + (int) );
-                }).pad(4f);
+                    c.table(a -> {
+                        a.add(Core.bundle.format("stat.productiontime") + ": " + (int) ((itemDuration * itemDurationMultiplier) / 60) + " seconds");
+                        a.row();
+                        //a.add(Core.bundle.format("stat.basepowergeneration") + (int) );
+                    }).pad(4f);
+                }).growX().center().get().background(Styles.black8).setFillParent(true);
             }
         }
 
