@@ -126,7 +126,7 @@ public class ConsumeComboGenerator extends GeneratorCombo{
         public boolean acceptCombo(Building source, ComboItem item) {
             return
                     ((this.combos.get(item) < this.getMaximumAccepted(item) && this.item == null) ||
-                    (this.combos.get(item) < this.getMaximumAccepted(item) && this.item != null && item == this.item) && item.flammability > 0);
+                    (this.combos.get(item) < this.getMaximumAccepted(item) && this.item != null && item == this.item)) && item.flammability > 0;
         }
 
         @Override
