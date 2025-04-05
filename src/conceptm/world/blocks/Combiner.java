@@ -208,7 +208,7 @@ public class Combiner extends ComboBlock {
             if (select0c != null) select0c.draw(x - offset * size, y + op, itemSize);
             if (select1c != null) select1c.draw(x + offset * size, y + op, itemSize);
 
-            if (output != null) output.draw(x, y - ((itemSize + op) * 2f), itemSize);
+            if (output != null) output.draw(x, y - ((itemSize + op) * 1.5f), itemSize);
 
             Draw.rect(pistonRegion, x, y + pr);
             Draw.xscl = -1f;
