@@ -87,7 +87,7 @@ public class ConsumeComboGenerator extends GeneratorCombo{
 
             //make sure the multiplier doesn't change when there is nothing to consume while it's still running
             if(item != null && valid){
-                itemDurationMultiplier = item.flammability;
+                itemDurationMultiplier = item.explosiveness;
             }
 
             //take in items periodically
@@ -109,7 +109,7 @@ public class ConsumeComboGenerator extends GeneratorCombo{
             }*/
 
             //generation time always goes down, but only at the end so consumeTriggerValid doesn't assume fake items
-            generateTime -= delta() / (itemDuration / itemDurationMultiplier);
+            generateTime -= delta() / (itemDuration * itemDurationMultiplier);
             if (!combos.any()) item = null;
         }
 
