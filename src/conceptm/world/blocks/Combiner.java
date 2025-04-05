@@ -94,7 +94,7 @@ public class Combiner extends ComboBlock {
         }
 
         public void combine(){
-            Object item0 = (select0 != null) ? select0 : (select0c != null) ? select1c : null;
+            Object item0 = (select0 != null) ? select0 : (select0c != null) ? select0c : null;
             Object item1 = (select1 != null) ? select1 : (select1c != null) ? select1c : null;
 
             if (item0 != null && item1 != null) {
@@ -109,7 +109,7 @@ public class Combiner extends ComboBlock {
         }
 
         public boolean check(){
-            Object item0 = (select0 != null) ? select0 : (select0c != null) ? select1c : null;
+            Object item0 = (select0 != null) ? select0 : (select0c != null) ? select0c : null;
             Object item1 = (select1 != null) ? select1 : (select1c != null) ? select1c : null;
             if (item0 != null && item1 != null) {
                 CustomItem newCombo = new CustomItem(item0, item1);
@@ -208,11 +208,7 @@ public class Combiner extends ComboBlock {
             if (select0c != null) select0c.draw(x - offset * size, y + op, itemSize);
             if (select1c != null) select1c.draw(x + offset * size, y + op, itemSize);
 
-            /*if (output != null) {
-                Draw.alpha(progress);
-                output.draw(x, y - (itemSize + op), itemSize);
-            }
-            Draw.alpha(1f);*/
+            if (output != null) output.draw(x, y - ((itemSize + op) * 2f), itemSize);
 
             Draw.rect(pistonRegion, x, y + pr);
             Draw.xscl = -1f;
