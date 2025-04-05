@@ -6,7 +6,7 @@ import arc.scene.ui.layout.Table;
 import arc.struct.OrderedMap;
 import arc.struct.Seq;
 import arc.util.Scaling;
-import conceptm.world.type.ComboItem;
+import conceptm.world.type.CustomItem;
 import mindustry.gen.Icon;
 import mindustry.graphics.Pal;
 import mindustry.input.Binding;
@@ -36,7 +36,7 @@ public class ModdedContentInfoDialog extends BaseDialog {
         });
     }
 
-    public void showItem(ComboItem Item){
+    public void showItem(CustomItem Item){
         cont.clear();
 
         Table table = new Table();

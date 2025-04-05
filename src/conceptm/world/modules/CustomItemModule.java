@@ -5,17 +5,17 @@ import conceptm.world.type.*;
 
 import java.util.Objects;
 
-public class ComboItemModule {
-    public Seq<ComboItemStack> items = new Seq<>();
+public class CustomItemModule {
+    public Seq<CustomItemStack> items = new Seq<>();
     public int total = 0;
 
-    public int get(ComboItem item){
+    public int get(CustomItem item){
         var c = items.find(comboItems -> Objects.equals(comboItems.item.name, item.name));
         if (c == null) return 0;
         return c.amount;
     }
 
-    public ComboItem getItem(int index){
+    public CustomItem getItem(int index){
         return items.get(index).item;
     }
 
@@ -23,11 +23,11 @@ public class ComboItemModule {
         return items.any();
     }
 
-    public boolean has(ComboItem item){
+    public boolean has(CustomItem item){
         return get(item) > 0;
     }
 
-    public boolean has(ComboItem item, int amount){
+    public boolean has(CustomItem item, int amount){
         return get(item) >= amount;
     }
 
@@ -35,19 +35,19 @@ public class ComboItemModule {
         return items.isEmpty();
     }
 
-    public void add(ComboItem item){
+    public void add(CustomItem item){
         add(item, 1);
     }
 
-    public void add(ComboItem item, int amount){
-        ComboItemStack last = items.find(comboItems -> Objects.equals(comboItems.item.name, item.name));
+    public void add(CustomItem item, int amount){
+        CustomItemStack last = items.find(comboItems -> Objects.equals(comboItems.item.name, item.name));
         if (last != null) last.set(last.item, last.amount + amount);
-        else items.add(new ComboItemStack(item, amount));
+        else items.add(new CustomItemStack(item, amount));
         total += amount;
     }
 
-    public void remove(ComboItem item, int amount){
-        ComboItemStack last = items.find(comboItems -> Objects.equals(comboItems.item.name, item.name));
+    public void remove(CustomItem item, int amount){
+        CustomItemStack last = items.find(comboItems -> Objects.equals(comboItems.item.name, item.name));
         if (last != null) {
             last.set(last.item, last.amount - amount);
             if (last.amount <= 0) items.remove(last);

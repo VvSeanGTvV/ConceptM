@@ -17,13 +17,13 @@ public class ConceptBlocks {
     Combine, ComboConveyor, ComboGen;
 
     public static void load(){
-        Combine = new Combiner("test-combine"){{
+        Combine = new Combiner("compressor"){{
             comboCapacity = 10;
             requirements(Category.distribution, with(Items.copper, 1));
-            size = 2;
+            size = 3;
         }};
 
-        ComboGen = new ConsumeComboGenerator("test-combine-gen"){{
+        ComboGen = new ConsumeComboGenerator("combustion-gen"){{
             requirements(Category.distribution, with(Items.copper, 1));
 
             powerProduction = 1.25f;

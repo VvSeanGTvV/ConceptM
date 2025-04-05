@@ -2,7 +2,6 @@ set stage=0
 set builded=0
 set copied=0
 @echo off
-set buildLocation=..\build\libs\ConceptMDesktop.jar
 
 
 :START
@@ -28,19 +27,20 @@ goto START
 
 :copyJar
 set modsLocation=%APPDATA%\Mindustry\mods
+echo set modsLocation=%modsLocation%
+
 cd build\libs\
 copy ConceptMDesktop.jar %modsLocation%
+if exist ConceptMDesktop.jar del ConceptMDesktop.jar
 cd ..\..\
-echo set modsLocation=%modsLocation%
-echo set buildLocation=%buildLocation%
-if exist %buildLocation% del %buildLocation%
+
 set stage=2
 set copied=1
 goto START
 
 :executeMindustry
 title Mindustry
-set mindustry=C:\Users\gombo\Downloads\Mindustry-BE-Desktop-25706.jar
+set mindustry=D:\user\Downloads\mindustry-windows-64-bit\Mindustry.exe
 echo autorun to %mindustry%
 set stage=3
 %mindustry%

@@ -21,7 +21,7 @@ import mindustry.world.*;
 import mindustry.world.blocks.*;
 import mindustry.world.blocks.distribution.*;
 import mindustry.world.meta.*;
-import conceptm.world.type.ComboItem;
+import conceptm.world.type.CustomItem;
 
 import static mindustry.Vars.tilesize;
 
@@ -132,7 +132,7 @@ public class ComboConveyor extends ComboBlock implements Autotiler{
 
     public class ComboConveyorBuild extends ComboBuilding implements ChainedBuilding{
         //parallel array data
-        public ComboItem[] ids = new ComboItem[capacity];
+        public CustomItem[] ids = new CustomItem[capacity];
         public float[] xs = new float[capacity], ys = new float[capacity];
         //amount of items, always < capacity
         public int len = 0;
@@ -172,7 +172,7 @@ public class ComboConveyor extends ComboBlock implements Autotiler{
             Draw.z(Layer.block - 0.1f);
 
             for(int i = 0; i < len; i++){
-                ComboItem item = ids[i];
+                CustomItem item = ids[i];
                 Tmp.v1.trns(rotation * 90, tilesize, 0);
                 Tmp.v2.trns(rotation * 90, -tilesize / 2f, xs[i] * tilesize / 2f);
 
@@ -305,7 +305,7 @@ public class ComboConveyor extends ComboBlock implements Autotiler{
             noSleep();
         }
 
-        public boolean pass(ComboItem item){
+        public boolean pass(CustomItem item){
             return item != null && next != null && next.team == team && outputCombo(next, item);
         }
 
@@ -315,13 +315,13 @@ public class ComboConveyor extends ComboBlock implements Autotiler{
         }
 
         @Override
-        public boolean acceptCombo(Building source, ComboItem item) {
+        public boolean acceptCombo(Building source, CustomItem item) {
             if(len >= capacity) return false;
             return source == last && minitem >= itemSpace && !(source.block.rotate && next == source);
         }
 
         @Override
-        public void handleCombo(Building source, ComboItem item) {
+        public void handleCombo(Building source, CustomItem item) {
             if(len >= capacity) return;
             noSleep();
             float x = source == right() ? -1 : 1;
@@ -363,7 +363,7 @@ public class ComboConveyor extends ComboBlock implements Autotiler{
                 float x = read.f();
                 float y = read.f();
                 if(i < capacity){
-                    ids[i] = new ComboItem(Vars.content.item(uitem0), Vars.content.item(uitem1));
+                    ids[i] = new CustomItem(Vars.content.item(uitem0), Vars.content.item(uitem1));
                     xs[i] = x;
                     ys[i] = y;
                 }

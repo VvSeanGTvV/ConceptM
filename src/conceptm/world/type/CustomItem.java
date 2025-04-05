@@ -9,7 +9,7 @@ import mindustry.world.meta.Stats;
 
 import java.util.*;
 
-public class ComboItem {
+public class CustomItem {
 
     public String localizedName, name;
     public Color color;
@@ -42,26 +42,26 @@ public class ComboItem {
     public boolean hidden = false;
 
     public Item item1, item2;
-    public ComboItem item1c, item2c;
+    public CustomItem item1c, item2c;
     private static final NameRegistry nameRegistry = new NameRegistry();
 
     public TextureRegion fullIcon;
 
-    public ComboItem(String name, Object a0, Object b0){
-        var aHard = (a0 instanceof Item item) ? item.hardness : (a0 instanceof ComboItem comboItem) ? comboItem.hardness : 0;
-        var bHard = (b0 instanceof Item item) ? item.hardness : (b0 instanceof ComboItem comboItem) ? comboItem.hardness : 0;
-        var aflame = (a0 instanceof Item item) ? item.flammability : (a0 instanceof ComboItem comboItem) ? comboItem.flammability : 0;
-        var bflame = (b0 instanceof Item item) ? item.flammability : (b0 instanceof ComboItem comboItem) ? comboItem.flammability : 0;
-        var aradio = (a0 instanceof Item item) ? item.radioactivity : (a0 instanceof ComboItem comboItem) ? comboItem.radioactivity : 0;
-        var bradio = (b0 instanceof Item item) ? item.radioactivity : (b0 instanceof ComboItem comboItem) ? comboItem.radioactivity : 0;
-        var acharge = (a0 instanceof Item item) ? item.charge : (a0 instanceof ComboItem comboItem) ? comboItem.charge : 0;
-        var bcharge = (b0 instanceof Item item) ? item.charge : (b0 instanceof ComboItem comboItem) ? comboItem.charge : 0;
-        var aexplode = (a0 instanceof Item item) ? item.explosiveness : (a0 instanceof ComboItem comboItem) ? comboItem.explosiveness : 0;
-        var bexplode = (b0 instanceof Item item) ? item.explosiveness : (b0 instanceof ComboItem comboItem) ? comboItem.explosiveness : 0;
-        var acost = (a0 instanceof Item item) ? item.cost : (a0 instanceof ComboItem comboItem) ? comboItem.cost : 1f;
-        var bcost = (b0 instanceof Item item) ? item.cost : (b0 instanceof ComboItem comboItem) ? comboItem.cost : 1f;
-        var ascale = (a0 instanceof Item item) ? item.healthScaling : (a0 instanceof ComboItem comboItem) ? comboItem.healthScaling : 0;
-        var bscale = (b0 instanceof Item item) ? item.healthScaling : (b0 instanceof ComboItem comboItem) ? comboItem.healthScaling : 0;
+    public CustomItem(String name, Object a0, Object b0){
+        var aHard = (a0 instanceof Item item) ? item.hardness : (a0 instanceof CustomItem comboItem) ? comboItem.hardness : 0;
+        var bHard = (b0 instanceof Item item) ? item.hardness : (b0 instanceof CustomItem comboItem) ? comboItem.hardness : 0;
+        var aflame = (a0 instanceof Item item) ? item.flammability : (a0 instanceof CustomItem comboItem) ? comboItem.flammability : 0;
+        var bflame = (b0 instanceof Item item) ? item.flammability : (b0 instanceof CustomItem comboItem) ? comboItem.flammability : 0;
+        var aradio = (a0 instanceof Item item) ? item.radioactivity : (a0 instanceof CustomItem comboItem) ? comboItem.radioactivity : 0;
+        var bradio = (b0 instanceof Item item) ? item.radioactivity : (b0 instanceof CustomItem comboItem) ? comboItem.radioactivity : 0;
+        var acharge = (a0 instanceof Item item) ? item.charge : (a0 instanceof CustomItem comboItem) ? comboItem.charge : 0;
+        var bcharge = (b0 instanceof Item item) ? item.charge : (b0 instanceof CustomItem comboItem) ? comboItem.charge : 0;
+        var aexplode = (a0 instanceof Item item) ? item.explosiveness : (a0 instanceof CustomItem comboItem) ? comboItem.explosiveness : 0;
+        var bexplode = (b0 instanceof Item item) ? item.explosiveness : (b0 instanceof CustomItem comboItem) ? comboItem.explosiveness : 0;
+        var acost = (a0 instanceof Item item) ? item.cost : (a0 instanceof CustomItem comboItem) ? comboItem.cost : 1f;
+        var bcost = (b0 instanceof Item item) ? item.cost : (b0 instanceof CustomItem comboItem) ? comboItem.cost : 1f;
+        var ascale = (a0 instanceof Item item) ? item.healthScaling : (a0 instanceof CustomItem comboItem) ? comboItem.healthScaling : 0;
+        var bscale = (b0 instanceof Item item) ? item.healthScaling : (b0 instanceof CustomItem comboItem) ? comboItem.healthScaling : 0;
 
         // Combine numeric properties (average them)
         float div = 1.5f;
@@ -76,8 +76,8 @@ public class ComboItem {
         item1 = (a0 instanceof Item item) ? item : null;
         item2 = (b0 instanceof Item item) ? item : null;
 
-        item1c = (a0 instanceof ComboItem item) ? item : null;
-        item2c = (b0 instanceof ComboItem item) ? item : null;
+        item1c = (a0 instanceof CustomItem item) ? item : null;
+        item2c = (b0 instanceof CustomItem item) ? item : null;
 
         List<Boolean> boolList = Arrays.asList(
                 item1 != null && item1.lowPriority,
@@ -100,17 +100,18 @@ public class ComboItem {
                 (item2 != null) ? item2.color : item2c.color
         );
 
+
+
+        String an = (a0 instanceof Item ai) ? ai.name : (a0 instanceof CustomItem ac) ? ac.name : "";
+        String bn = (b0 instanceof Item bi) ? bi.name : (b0 instanceof CustomItem bc) ? bc.name : "";
+
         this.localizedName = name;
-
-        String an = (a0 instanceof Item ai) ? ai.localizedName : (a0 instanceof ComboItem ac) ? ac.localizedName : "";
-        String bn = (b0 instanceof Item bi) ? bi.localizedName : (b0 instanceof ComboItem bc) ? bc.localizedName : "";
-
         this.name = nameRegistry.generateRegistryKey(an, bn);
         createIcons(item1, item2, item1c, item2c);
         setStats();
     }
 
-    public ComboItem(Object item1, Object item2) {
+    public CustomItem(Object item1, Object item2) {
         this(
                 nameRegistry.getNameFor(item1, item2),
                 item1,
@@ -132,12 +133,13 @@ public class ComboItem {
     public void draw(float x, float y, float size, Color color){
         Draw.color(color);
         Draw.rect(fullIcon, x, y, size, size);
+        Draw.color();
     }
 
-    public void createIcons(Item item0, Item item1, ComboItem comboItem0, ComboItem comboItem1) {
+    public void createIcons(Item item0, Item item1, CustomItem customItem0, CustomItem customItem1) {
         // Get the pixmaps for both items
-        var icon1 = (item0 != null) ? item0.fullIcon : (comboItem0 != null) ? comboItem0.fullIcon : Core.atlas.find("white");
-        var icon2 = (item1  != null) ? item1.fullIcon : (comboItem1 != null) ? comboItem1.fullIcon : Core.atlas.find("white");
+        var icon1 = (item0 != null) ? item0.fullIcon : (customItem0 != null) ? customItem0.fullIcon : Core.atlas.find("white");
+        var icon2 = (item1  != null) ? item1.fullIcon : (customItem1 != null) ? customItem1.fullIcon : Core.atlas.find("white");
         fullIcon = icon1;
     }
 
@@ -155,17 +157,18 @@ public class ComboItem {
         private final Map<String, String> generatedNames = new HashMap<>();
 
         public String getNameFor(Object a, Object b) {
-            String an = (a instanceof Item ai) ? ai.localizedName : (a instanceof ComboItem ac) ? ac.localizedName : "";
-            String bn = (b instanceof Item bi) ? bi.localizedName : (b instanceof ComboItem bc) ? bc.localizedName : "";
+            String an = (a instanceof Item ai) ? ai.name : (a instanceof CustomItem ac) ? ac.name : "";
+            String bn = (b instanceof Item bi) ? bi.name : (b instanceof CustomItem bc) ? bc.name : "";
             String key = generateRegistryKey(an, bn);
+
             return generatedNames.computeIfAbsent(key, k -> DynamicNameGenerator.generateName(a, b));
         }
 
         private String generateRegistryKey(String a, String b) {
             // Ensure consistent key regardless of order
             return a.compareTo(b) < 0 ?
-                    a + "|" + b :
-                    b + "|" + a;
+                    "[" + a + "+" + b + "]" :
+                    "[" + b + "+" + a + "]";
         }
 
     }
@@ -218,8 +221,8 @@ public class ComboItem {
 
         public static String generateName(Object a, Object b) {
             // First try linguistic blending
-            var ia = (a instanceof Item i0) ? i0.localizedName : (a instanceof ComboItem c0) ? c0.localizedName : null;
-            var ib = (b instanceof Item i1) ? i1.localizedName : (b instanceof ComboItem c1) ? c1.localizedName : null;
+            var ia = (a instanceof Item i0) ? i0.localizedName : (a instanceof CustomItem c0) ? c0.localizedName : null;
+            var ib = (b instanceof Item i1) ? i1.localizedName : (b instanceof CustomItem c1) ? c1.localizedName : null;
             String blended = blendNamesLinguistically(ia, ib);
             if (isGoodBlend(blended)) {
                 return blended;
@@ -254,7 +257,7 @@ public class ComboItem {
                 }
             }
 
-            if (item instanceof ComboItem a) {
+            if (item instanceof CustomItem a) {
                 if (a.hardness > 4 && a.flammability < 0.3f) {
                     return MaterialType.METAL;
                 } else if (a.hardness > 5 && a.radioactivity < 0.2f) {
@@ -331,14 +334,14 @@ public class ComboItem {
 
         private static String determineSuffix(Object a0, Object b0) {
 
-            var aHard = (a0 instanceof Item item) ? item.hardness : (a0 instanceof ComboItem comboItem) ? comboItem.hardness : 0;
-            var bHard = (b0 instanceof Item item) ? item.hardness : (b0 instanceof ComboItem comboItem) ? comboItem.hardness : 0;
+            var aHard = (a0 instanceof Item item) ? item.hardness : (a0 instanceof CustomItem comboItem) ? comboItem.hardness : 0;
+            var bHard = (b0 instanceof Item item) ? item.hardness : (b0 instanceof CustomItem comboItem) ? comboItem.hardness : 0;
 
-            var aflame = (a0 instanceof Item item) ? item.flammability : (a0 instanceof ComboItem comboItem) ? comboItem.flammability : 0;
-            var bflame = (b0 instanceof Item item) ? item.flammability : (b0 instanceof ComboItem comboItem) ? comboItem.flammability : 0;
+            var aflame = (a0 instanceof Item item) ? item.flammability : (a0 instanceof CustomItem comboItem) ? comboItem.flammability : 0;
+            var bflame = (b0 instanceof Item item) ? item.flammability : (b0 instanceof CustomItem comboItem) ? comboItem.flammability : 0;
 
-            var aradio = (a0 instanceof Item item) ? item.radioactivity : (a0 instanceof ComboItem comboItem) ? comboItem.radioactivity : 0;
-            var bradio = (b0 instanceof Item item) ? item.radioactivity : (b0 instanceof ComboItem comboItem) ? comboItem.radioactivity : 0;
+            var aradio = (a0 instanceof Item item) ? item.radioactivity : (a0 instanceof CustomItem comboItem) ? comboItem.radioactivity : 0;
+            var bradio = (b0 instanceof Item item) ? item.radioactivity : (b0 instanceof CustomItem comboItem) ? comboItem.radioactivity : 0;
 
             float avgHardness = (aHard + bHard) / 2f;
             float avgFlammability = (aflame + bflame) / 2f;

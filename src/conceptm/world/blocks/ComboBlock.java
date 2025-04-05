@@ -5,15 +5,16 @@ import arc.util.Tmp;
 import mindustry.game.Team;
 import mindustry.gen.Building;
 import mindustry.graphics.Pal;
+import mindustry.type.Item;
 import mindustry.ui.Bar;
 import mindustry.world.Block;
-import conceptm.world.modules.ComboItemModule;
-import conceptm.world.type.ComboItem;
+import conceptm.world.modules.CustomItemModule;
+import conceptm.world.type.CustomItem;
 
 public class ComboBlock extends Block {
     public int comboCapacity = 1;
 
-    public boolean hasCombo = true;
+    public boolean hasCustomItem = true;
 
     public ComboBlock(String name) {
         super(name);
@@ -23,24 +24,24 @@ public class ComboBlock extends Block {
     public void setBars() {
         super.setBars();
 
-        if (this.hasCombo && this.configurable) {
+        if (this.hasCustomItem && this.configurable) {
             this.addBar("combos", (ComboBuilding entity) -> new Bar(() -> Core.bundle.format("bar.combos", entity.combos.total()), () -> Pal.items, () -> (float)entity.combos.total() / (float)this.comboCapacity));
         }
     }
 
     public class ComboBuilding extends Building {
-        public ComboItemModule combos;
+        public CustomItemModule combos;
         @Override
         public Building create(Block block, Team team) {
 
-            if (hasCombo) {
-                this.combos = new ComboItemModule();
+            if (hasCustomItem) {
+                this.combos = new CustomItemModule();
             }
 
             return super.create(block, team);
         }
 
-        public void outputCombo(ComboItem item) {
+        public void outputCombo(CustomItem item) {
             int dump = this.cdump;
 
             for(int i = 0; i < this.proximity.size; ++i) {
@@ -54,7 +55,7 @@ public class ComboBlock extends Block {
             }
         }
 
-        public boolean hasOutputs(ComboItem item){
+        public boolean hasOutputs(CustomItem item){
             int dump = this.cdump;
 
             for(int i = 0; i < this.proximity.size; ++i) {
@@ -69,7 +70,7 @@ public class ComboBlock extends Block {
             return false;
         }
 
-        public boolean outputCombo(Building next, ComboItem item) {
+        public boolean outputCombo(Building next, CustomItem item) {
             if (next instanceof ComboBuilding comboBuilding) {
                 if (comboBuilding.acceptCombo(this, item) && this.canDump(comboBuilding, item)) {
                     comboBuilding.handleCombo(this, item);
@@ -80,14 +81,25 @@ public class ComboBlock extends Block {
             return false;
         }
 
-        public boolean canDump(Building to, ComboItem item) {
+        public void consumeObject(Object item0, Object item1, int amount){
+            if (item0 instanceof Item item) items.remove(item, amount);
+            if (item1 instanceof Item item) items.remove(item, amount);
+            if (item0 instanceof CustomItem item) combos.remove(item, amount);
+            if (item1 instanceof CustomItem item) combos.remove(item, amount);
+        }
+
+        public void consumeObject(Object item0, Object item1){
+            consumeObject(item0, item1, 1);
+        }
+
+        public boolean canDump(Building to, CustomItem item) {
             return true;
         }
 
-        public void handleCombo(Building source, ComboItem item) {
+        public void handleCombo(Building source, CustomItem item) {
             combos.add(item);
         }
-        public boolean acceptCombo(Building source, ComboItem item) {
+        public boolean acceptCombo(Building source, CustomItem item) {
             return false;
         }
 
@@ -106,7 +118,7 @@ public class ComboBlock extends Block {
             return nearby(Tmp.p1.x, Tmp.p1.y);
         }
 
-        public int getMaximumAccepted(ComboItem item) {
+        public int getMaximumAccepted(CustomItem item) {
             return comboCapacity;
         }
     }

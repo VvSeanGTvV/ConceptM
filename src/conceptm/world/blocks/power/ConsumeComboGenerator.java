@@ -5,7 +5,7 @@ import arc.graphics.Color;
 import arc.math.Mathf;
 import arc.scene.ui.layout.Table;
 import arc.util.Time;
-import conceptm.world.type.ComboItem;
+import conceptm.world.type.CustomItem;
 import mindustry.content.Fx;
 import mindustry.entities.Effect;
 import mindustry.gen.Building;
@@ -35,7 +35,7 @@ public class ConsumeComboGenerator extends GeneratorCombo{
 
     public class ConsumeComboGeneratorBuild extends GeneratorComboBuild{
         public float warmup, totalTime, efficiencyMultiplier = 1f, itemDurationMultiplier = 1;
-        public ComboItem item;
+        public CustomItem item;
 
         @Override
         public void buildConfiguration(Table table) {
@@ -91,7 +91,7 @@ public class ConsumeComboGenerator extends GeneratorCombo{
             }
 
             //take in items periodically
-            if(hasCombo && valid && generateTime <= 0f){
+            if(hasCustomItem && valid && generateTime <= 0f){
                 combos.remove(item, 1);
                 consumeEffect.at(x + Mathf.range(generateEffectRange), y + Mathf.range(generateEffectRange));
                 generateTime = 1f;
@@ -114,7 +114,7 @@ public class ConsumeComboGenerator extends GeneratorCombo{
         }
 
         @Override
-        public void handleCombo(Building source, ComboItem item) {
+        public void handleCombo(Building source, CustomItem item) {
             if (item.flammability > 0) {
             super.handleCombo(source, item);
             this.item = item;
@@ -123,7 +123,7 @@ public class ConsumeComboGenerator extends GeneratorCombo{
         }
 
         @Override
-        public boolean acceptCombo(Building source, ComboItem item) {
+        public boolean acceptCombo(Building source, CustomItem item) {
             return
                     ((this.combos.get(item) < this.getMaximumAccepted(item) && this.item == null) ||
                     (this.combos.get(item) < this.getMaximumAccepted(item) && this.item != null && item == this.item)) && item.flammability > 0;
