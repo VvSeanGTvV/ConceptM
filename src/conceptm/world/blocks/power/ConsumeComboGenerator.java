@@ -87,7 +87,7 @@ public class ConsumeComboGenerator extends GeneratorCombo{
 
             //make sure the multiplier doesn't change when there is nothing to consume while it's still running
             if(item != null && valid){
-                itemDurationMultiplier = item.flammability - item.explosiveness;
+                itemDurationMultiplier = item.flammability - (item.explosiveness / 4);
             }
 
             //take in items periodically
