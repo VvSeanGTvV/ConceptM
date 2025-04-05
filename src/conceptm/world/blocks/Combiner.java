@@ -24,7 +24,7 @@ public class Combiner extends ComboBlock {
 
     public float warmupSpeed = 0.019f;
 
-    public TextureRegion botRegion, pistonRegion;
+    public TextureRegion botRegion, botMidRegion, pistonRegion0, pistonRegion1;
     public Combiner(String name) {
         super(name);
 
@@ -49,7 +49,9 @@ public class Combiner extends ComboBlock {
     public void load() {
         super.load();
         botRegion = Core.atlas.find(name + "-bottom");
-        pistonRegion = Core.atlas.find(name + "-gate");
+        botMidRegion = Core.atlas.find(name + "-bottom-mid");
+        pistonRegion0 = Core.atlas.find(name + "-gate-0");
+        pistonRegion1 = Core.atlas.find(name + "-gate-1");
     }
 
     public class CombinerBuild extends ComboBuilding {
@@ -202,17 +204,22 @@ public class Combiner extends ComboBlock {
 
             float pr = (1f - progress) * itemSize;
             float op = (progress) * (-itemSize);
-            if (select0 != null) Draw.rect(select0.fullIcon, x - offset * size, y + op, itemSize, itemSize);
-            if (select1 != null) Draw.rect(select1.fullIcon, x + offset * size, y + op, itemSize, itemSize);
 
-            if (select0c != null) select0c.draw(x - offset * size, y + op, itemSize);
-            if (select1c != null) select1c.draw(x + offset * size, y + op, itemSize);
+            if (select0 != null) Draw.rect(select0.fullIcon, x - (offset - (progress * (itemSize / 2))) * size, y , itemSize, itemSize);
+            if (select1 != null) Draw.rect(select1.fullIcon, x + (offset - (progress * (itemSize / 2))) * size, y, itemSize, itemSize);
 
-            if (output != null) output.draw(x, y - ((itemSize + op) * 1.5f), (progress * itemSize));
+            if (select0c != null) select0c.draw(x - (offset - (progress * (itemSize / 2))) * size, y, itemSize);
+            if (select1c != null) select1c.draw(x + (offset - (progress * (itemSize / 2))) * size, y, itemSize);
 
-            Draw.rect(pistonRegion, x, y + pr);
-            Draw.xscl = -1f;
-            Draw.rect(pistonRegion, x, y + pr);
+            Draw.rect(botMidRegion, x, y);
+            if (output != null) output.draw(x, y, (progress * itemSize));
+
+            Draw.xscl = Mathf.clamp(progress * 2f);
+            Draw.rect(pistonRegion0, x - (7.25f + ((1f - Mathf.clamp(progress * 2f)) * (itemSize / 2))), y);
+
+            Draw.xscl = -Mathf.clamp(progress * 2f);
+            Draw.rect(pistonRegion1, x + (7.25f + ((1f - Mathf.clamp(progress * 2f)) * (itemSize / 2))), y);
+
             Draw.xscl = 1f;
 
             Draw.rect(region, x, y);
