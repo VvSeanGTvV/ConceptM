@@ -20,7 +20,7 @@ import static mindustry.Vars.content;
 public class Combiner extends ComboBlock {
 
     /** The time in number of ticks to make single item */
-    public float craftTime = 60f;
+    public float craftTime = 30f;
 
     public float warmupSpeed = 0.019f;
 

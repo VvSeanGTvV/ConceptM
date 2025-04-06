@@ -15,10 +15,6 @@ public class CustomItemModule {
         return c.amount;
     }
 
-    public CustomItem getItem(int index){
-        return items.get(index).item;
-    }
-
     public boolean any(){
         return items.any();
     }
