@@ -17,7 +17,7 @@ import java.util.Objects;
 import static conceptm.ModTemplate.ui;
 import static mindustry.Vars.content;
 
-public class Combiner extends ComboBlock {
+public class Combiner extends CustomBlock {
 
     /** The time in number of ticks to make single item */
     public float craftTime = 30f;
@@ -40,7 +40,7 @@ public class Combiner extends ComboBlock {
     public void setStats() {
         stats.timePeriod = craftTime;
         super.setStats();
-        if((hasItems && itemCapacity > 0) || (hasCustomItem && comboCapacity > 0)){
+        if((hasItems && itemCapacity > 0) || (hasCustomItem && customItemCapacity > 0)){
             stats.add(Stat.productionTime, craftTime / 60f, StatUnit.seconds);
         }
     }
@@ -54,7 +54,7 @@ public class Combiner extends ComboBlock {
         pistonRegion1 = Core.atlas.find(name + "-gate-1");
     }
 
-    public class CombinerBuild extends ComboBuilding {
+    public class CombinerBuild extends CustomBuilding {
         public float progress;
         public float totalProgress;
         public float warmup;
@@ -133,9 +133,9 @@ public class Combiner extends ComboBlock {
         @Override
         public void updateTile() {
             boolean valid = (select0 != null && select1 != null && items.has(select0) && items.has(select1)) ||
-                    (select0c != null && select1 != null && combos.has(select0c) && items.has(select1)) ||
-                    (select0 != null && select1c != null && combos.has(select1c) && items.has(select0)) ||
-                    (select0c != null && select1c != null && combos.has(select1c) && combos.has(select0c));
+                    (select0c != null && select1 != null && customItems.has(select0c) && items.has(select1)) ||
+                    (select0 != null && select1c != null && customItems.has(select1c) && items.has(select0)) ||
+                    (select0c != null && select1c != null && customItems.has(select1c) && customItems.has(select0c));
 
             efficiency(valid && check() ? 1f : 0f);
 
@@ -165,22 +165,17 @@ public class Combiner extends ComboBlock {
                 select0 = select1 = null;
             }
 
-            if (combos.any() && combos != null) {
-                for (CustomItemStack itemc : combos.items) {
-                    if (select0c == null && combos.has(itemc.item) && select0 == null && (select1c == null || (select1c != null && !Objects.equals(itemc.item.name, select1c.name)))) select0c = itemc.item;
-                    if (select1c == null && combos.has(itemc.item) && select1 == null && (select0c == null || (select0c != null && !Objects.equals(itemc.item.name, select0c.name)))) select1c = itemc.item;
+            if (customItems.any() && customItems != null) {
+                for (CustomItemStack itemc : customItems.items) {
+                    if (select0c == null && customItems.has(itemc.item) && select0 == null && (select1c == null || !Objects.equals(itemc.item.name, select1c.name))) select0c = itemc.item;
+                    if (select1c == null && customItems.has(itemc.item) && select1 == null && (select0c == null || !Objects.equals(itemc.item.name, select0c.name))) select1c = itemc.item;
                 }
 
-                if (select0c != null && !combos.has(select0c)) select0c = null;
-                if (select1c != null && !combos.has(select1c)) select1c = null;
+                if (select0c != null && !customItems.has(select0c)) select0c = null;
+                if (select1c != null && !customItems.has(select1c)) select1c = null;
             } else {
                 select0c = select1c = null;
             }
-        }
-
-        @Override
-        public boolean acceptCombo(Building source, CustomItem item) {
-            return this.combos.get(item) < this.getMaximumAccepted(item);
         }
 
         @Override
@@ -189,7 +184,7 @@ public class Combiner extends ComboBlock {
         }
 
         @Override
-        public boolean isOutput(ComboBuilding source) {
+        public boolean isOutput(CustomBuilding source) {
             return true;
         }
 

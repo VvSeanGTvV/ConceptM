@@ -1,8 +1,9 @@
 package conceptm.content;
 
 import conceptm.world.blocks.Combiner;
-import conceptm.world.blocks.ComboConveyor;
-import conceptm.world.blocks.power.ConsumeComboGenerator;
+import conceptm.world.blocks.CustomConveyor;
+import conceptm.world.blocks.liquid.*;
+import conceptm.world.blocks.power.ConsumeCustomGenerator;
 import mindustry.content.Fx;
 import mindustry.content.Items;
 import mindustry.gen.Sounds;
@@ -14,16 +15,27 @@ import static mindustry.type.ItemStack.with;
 public class ConceptBlocks {
     public static Block
 
-    Combine, ComboConveyor, ComboGen;
+    Combine, ComboConveyor, ComboGen, Mixer, ComboConduit;
 
     public static void load(){
         Combine = new Combiner("compressor"){{
-            comboCapacity = 10;
+            customItemCapacity = 10;
             requirements(Category.distribution, with(Items.copper, 1));
             size = 3;
         }};
 
-        ComboGen = new ConsumeComboGenerator("combustion-gen"){{
+        Mixer = new Mixer("mixer"){{
+            customLiquidCapacity = 10;
+            requirements(Category.distribution, with(Items.copper, 1));
+            size = 3;
+        }};
+
+        ComboConduit = new CustomConduit("test-conduit"){{
+            requirements(Category.distribution, with(Items.copper, 1));
+            size = 1;
+        }};
+
+        ComboGen = new ConsumeCustomGenerator("combustion-gen"){{
             requirements(Category.distribution, with(Items.copper, 1));
 
             powerProduction = 1.25f;
@@ -36,7 +48,7 @@ public class ConceptBlocks {
             size = 1;
         }};
 
-        ComboConveyor = new ComboConveyor("shape-conveyor"){{
+        ComboConveyor = new CustomConveyor("shape-conveyor"){{
             requirements(Category.distribution, with(Items.copper, 1));
             size = 1;
 

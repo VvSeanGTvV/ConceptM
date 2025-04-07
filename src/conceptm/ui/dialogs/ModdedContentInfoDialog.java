@@ -6,7 +6,7 @@ import arc.scene.ui.layout.Table;
 import arc.struct.OrderedMap;
 import arc.struct.Seq;
 import arc.util.Scaling;
-import conceptm.world.type.CustomItem;
+import conceptm.world.type.*;
 import mindustry.gen.Icon;
 import mindustry.graphics.Pal;
 import mindustry.input.Binding;
@@ -34,6 +34,37 @@ public class ModdedContentInfoDialog extends BaseDialog {
                 Core.app.post(this::hide);
             }
         });
+    }
+
+    public void addStats(Table table, Stats stats){
+        table.row();
+        table.add("@category.general").fillX().color(Pal.accent);
+        table.row();
+
+        for(StatCat cat : stats.toMap().keys()){
+            OrderedMap<Stat, Seq<StatValue>> map = stats.toMap().get(cat);
+
+            if(map.size == 0) continue;
+
+            if(stats.useCategories){
+                table.add("@category." + cat.name).color(Pal.accent).fillX();
+                table.row();
+            }
+
+            for(Stat stat : map.keys()){
+                table.table(inset -> {
+                    inset.left();
+                    inset.add("[lightgray]" + stat.localized() + ":[] ").left().top();
+                    Seq<StatValue> arr = map.get(stat);
+                    for(StatValue value : arr){
+                        value.display(inset);
+                        inset.add().size(10f);
+                    }
+
+                }).fillX().padLeft(10);
+                table.row();
+            }
+        }
     }
 
     public void showItem(CustomItem Item){
@@ -68,37 +99,47 @@ public class ModdedContentInfoDialog extends BaseDialog {
             a.image(Icon.rightSmall).pad(4f);
             a.image(Item.fullIcon).color(Item.color).pad(4f);
         });
+        addStats(table, Item.stats);
+
+        ScrollPane pane = new ScrollPane(table);
+        cont.add(pane);
+
+        show();
+    }
+
+    public void showLiquid(CustomLiquid Liquid){
+        cont.clear();
+
+        Table table = new Table();
+        table.margin(10);
+
+        table.table(title1 -> {
+            title1.image(Liquid.fullIcon).size(iconXLarge).scaling(Scaling.fit).color(Liquid.color);
+            title1.add("[accent]" + Liquid.localizedName + (settings.getBool("console") ? "\n[gray]" + Liquid.name : "")).padLeft(5);
+        });
 
         table.row();
-        table.add("@category.general").fillX().color(Pal.accent);
-        table.row();
 
-        Stats stats = Item.stats;
-
-        for(StatCat cat : stats.toMap().keys()){
-            OrderedMap<Stat, Seq<StatValue>> map = stats.toMap().get(cat);
-
-            if(map.size == 0) continue;
-
-            if(stats.useCategories){
-                table.add("@category." + cat.name).color(Pal.accent).fillX();
-                table.row();
+        table.table(a -> {
+            if (Liquid.liq1 != null) a.image(Liquid.liq1.fullIcon).pad(4f);
+            else if (Liquid.liq1c != null) {
+                a.image(Liquid.liq1c.fullIcon).color(Liquid.liq1c.color).pad(4f);
+                a.button("?", Styles.flatBordert, () -> ui.content.showLiquid(Liquid.liq1c)).size(40f).pad(10).right().grow();
             }
+            else a.add("?").pad(4f);
 
-            for(Stat stat : map.keys()){
-                table.table(inset -> {
-                    inset.left();
-                    inset.add("[lightgray]" + stat.localized() + ":[] ").left().top();
-                    Seq<StatValue> arr = map.get(stat);
-                    for(StatValue value : arr){
-                        value.display(inset);
-                        inset.add().size(10f);
-                    }
-
-                }).fillX().padLeft(10);
-                table.row();
+            a.add("+").pad(4f);
+            if (Liquid.liq2 != null) a.image(Liquid.liq2.fullIcon).pad(4f);
+            else if (Liquid.liq2c != null) {
+                a.image(Liquid.liq2c.fullIcon).color(Liquid.liq2c.color).pad(4f);
+                a.button("?", Styles.flatBordert, () -> ui.content.showLiquid(Liquid.liq2c)).size(40f).pad(10).right().grow();
             }
-        }
+            else a.add("?").pad(4f);
+
+            a.image(Icon.rightSmall).pad(4f);
+            a.image(Liquid.fullIcon).color(Liquid.color).pad(4f);
+        });
+        addStats(table, Liquid.stats);
 
         ScrollPane pane = new ScrollPane(table);
         cont.add(pane);

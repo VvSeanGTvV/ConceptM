@@ -25,7 +25,7 @@ import conceptm.world.type.CustomItem;
 
 import static mindustry.Vars.tilesize;
 
-public class ComboConveyor extends ComboBlock implements Autotiler{
+public class CustomConveyor extends CustomBlock implements Autotiler{
     private static final float itemSpace = 0.5f;
     private static final int capacity = 1;
 
@@ -36,7 +36,7 @@ public class ComboConveyor extends ComboBlock implements Autotiler{
 
     public @Nullable Block junctionReplacement, bridgeReplacement;
 
-    public ComboConveyor(String name){
+    public CustomConveyor(String name){
         super(name);
         group = BlockGroup.transportation;
         priority = TargetPriority.transport;
@@ -130,7 +130,7 @@ public class ComboConveyor extends ComboBlock implements Autotiler{
                 Mathf.mod(req.tile().build.rotation - req.rotation, 2) == 1 ? junctionReplacement : this;
     }
 
-    public class ComboConveyorBuild extends ComboBuilding implements ChainedBuilding{
+    public class ComboConveyorBuild extends CustomBuilding implements ChainedBuilding{
         //parallel array data
         public CustomItem[] ids = new CustomItem[capacity];
         public float[] xs = new float[capacity], ys = new float[capacity];
@@ -216,9 +216,9 @@ public class ComboConveyor extends ComboBlock implements Autotiler{
 
             next = front();
             last = null;
-            boolean connectBack = back() instanceof ComboBuilding && ((ComboBuilding) back()).isOutput(this);
-            boolean connectLeft = left() instanceof ComboBuilding && ((ComboBuilding) left()).isOutput(this);
-            boolean connectRight = right() instanceof ComboBuilding && ((ComboBuilding) right()).isOutput(this);
+            boolean connectBack = back() instanceof CustomBuilding && ((CustomBuilding) back()).isOutput(this);
+            boolean connectLeft = left() instanceof CustomBuilding && ((CustomBuilding) left()).isOutput(this);
+            boolean connectRight = right() instanceof CustomBuilding && ((CustomBuilding) right()).isOutput(this);
             if (connectBack) last = back();
             else if (connectLeft && !connectRight) last = left();
             else if (!connectLeft && connectRight) last = right();
@@ -315,13 +315,13 @@ public class ComboConveyor extends ComboBlock implements Autotiler{
         }
 
         @Override
-        public boolean acceptCombo(Building source, CustomItem item) {
+        public boolean acceptCustomItem(Building source, CustomItem item) {
             if(len >= capacity) return false;
             return source == last && minitem >= itemSpace && !(source.block.rotate && next == source);
         }
 
         @Override
-        public void handleCombo(Building source, CustomItem item) {
+        public void handeCustomItem(Building source, CustomItem item) {
             if(len >= capacity) return;
             noSleep();
             float x = source == right() ? -1 : 1;
@@ -400,7 +400,7 @@ public class ComboConveyor extends ComboBlock implements Autotiler{
         }
 
         @Override
-        public boolean isOutput(ComboBuilding source) {
+        public boolean isOutput(CustomBuilding source) {
             return atSide(0, 0) == source;
         }
 

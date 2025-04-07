@@ -4,7 +4,7 @@ import arc.Core;
 import arc.graphics.Color;
 import arc.math.Rand;
 import arc.struct.ObjectSet;
-import arc.util.Nullable;
+import arc.util.*;
 import mindustry.content.*;
 import mindustry.entities.Effect;
 import mindustry.type.*;
@@ -14,6 +14,7 @@ import java.util.*;
 
 import static conceptm.graphics.BlendColor.blendColorsVibrant;
 import static conceptm.world.type.CustomItem.nameRegistry;
+import static mindustry.type.Liquid.*;
 
 public class CustomLiquid extends CustomUnlockable {
 
@@ -103,20 +104,19 @@ public class CustomLiquid extends CustomUnlockable {
         );
         this.lowPriority = boolList.stream().reduce(false, Boolean::logicalOr);
 
-        boolList = Arrays.asList(
-                item1 != null && item1.buildable,
-                item2 != null && item2.buildable,
-                item1c != null && item1c.buildable,
-                item2c != null && item2c.buildable
+
+        */
+
+        List<Boolean> boolList = Arrays.asList(
+                liq1 != null && liq1.gas,
+                liq1c != null && liq1c.gas
         );
-        this.buildable = boolList.stream().reduce(false, Boolean::logicalOr);
+        this.gas = boolList.stream().reduce(false, Boolean::logicalOr);
 
         this.color = blendColorsVibrant(
                 (liq1 != null) ? liq1.color : (liq1c != null) ? liq1c.color : Color.lightGray.cpy(),
                 (liq2 != null) ? liq2.color : (liq2c != null) ? liq2c.color : Color.lightGray.cpy()
-        );*/
-
-
+        );
 
         String an = (a0 instanceof Liquid ai) ? ai.name : (a0 instanceof CustomLiquid ac) ? ac.name : "";
         String bn = (b0 instanceof Liquid bi) ? bi.name : (b0 instanceof CustomLiquid bc) ? bc.name : "";
@@ -125,6 +125,10 @@ public class CustomLiquid extends CustomUnlockable {
         this.name = nameRegistry.generateRegistryKeyWithBracket(an, bn, "[", "]");
         createIcons(liq1, liq2, liq1c, liq2c);
         setStats();
+
+        short i0d = (liq1 != null) ? liq1.id : (liq1c != null) ? liq1c.id : (short) 0;
+        short i1d = (liq2 != null) ? liq2.id : (liq2c != null) ? liq2c.id : (short) 0;
+        this.id = (short) (i0d + i1d);
     }
 
     public CustomLiquid(Object item1, Object item2) {
@@ -133,6 +137,10 @@ public class CustomLiquid extends CustomUnlockable {
                 item1,
                 item2
         );
+    }
+
+    public int getAnimationFrame(){
+        return (int)(Time.time / (gas ? animationScaleGas : animationScaleLiquid) * animationFrames + id*5) % animationFrames;
     }
 
     public void createIcons(Liquid item0, Liquid item1, CustomLiquid customItem0, CustomLiquid customItem1) {

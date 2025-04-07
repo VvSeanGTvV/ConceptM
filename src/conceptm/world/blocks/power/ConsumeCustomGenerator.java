@@ -15,7 +15,7 @@ import mindustry.ui.Styles;
 
 import static conceptm.ModTemplate.ui;
 
-public class ConsumeComboGenerator extends GeneratorCombo{
+public class ConsumeCustomGenerator extends GeneratorCustom {
 
     /** The time in number of ticks during which a single item will produce power. */
     public float itemDuration = 120f;
@@ -27,7 +27,7 @@ public class ConsumeComboGenerator extends GeneratorCombo{
     public float baseLightRadius = 65f;
 
 
-    public ConsumeComboGenerator(String name) {
+    public ConsumeCustomGenerator(String name) {
         super(name);
 
         configurable = true;
@@ -72,7 +72,7 @@ public class ConsumeComboGenerator extends GeneratorCombo{
         @Override
         public void updateTile(){
 
-            efficiency((combos.any()) ? 1f : 0f);
+            efficiency((customItems.any()) ? 1f : 0f);
             boolean valid = efficiency > 0;
 
             warmup = Mathf.lerpDelta(warmup, valid ? 1f : 0f, warmupSpeed);
@@ -92,7 +92,7 @@ public class ConsumeComboGenerator extends GeneratorCombo{
 
             //take in items periodically
             if(hasCustomItem && valid && generateTime <= 0f){
-                combos.remove(item, 1);
+                customItems.remove(item, 1);
                 consumeEffect.at(x + Mathf.range(generateEffectRange), y + Mathf.range(generateEffectRange));
                 generateTime = 1f;
             }
@@ -110,23 +110,23 @@ public class ConsumeComboGenerator extends GeneratorCombo{
 
             //generation time always goes down, but only at the end so consumeTriggerValid doesn't assume fake items
             generateTime -= delta() / (itemDuration * itemDurationMultiplier);
-            if (!combos.any()) item = null;
+            if (!customItems.any()) item = null;
         }
 
         @Override
-        public void handleCombo(Building source, CustomItem item) {
+        public void handeCustomItem(Building source, CustomItem item) {
             if (item.flammability > 0) {
-            super.handleCombo(source, item);
+            super.handeCustomItem(source, item);
             this.item = item;
             updateEfficiencyMultiplier();
             }
         }
 
         @Override
-        public boolean acceptCombo(Building source, CustomItem item) {
+        public boolean acceptCustomItem(Building source, CustomItem item) {
             return
-                    ((this.combos.get(item) < this.getMaximumAccepted(item) && this.item == null) ||
-                    (this.combos.get(item) < this.getMaximumAccepted(item) && this.item != null && item == this.item)) && item.flammability > 0;
+                    ((this.customItems.get(item) < this.getMaximumAccepted(item) && this.item == null) ||
+                    (this.customItems.get(item) < this.getMaximumAccepted(item) && this.item != null && item == this.item)) && item.flammability > 0;
         }
 
         @Override

@@ -10,7 +10,7 @@ import arc.util.Strings;
 import arc.util.Tmp;
 import arc.util.io.Reads;
 import arc.util.io.Writes;
-import conceptm.world.blocks.ComboBlock;
+import conceptm.world.blocks.CustomBlock;
 import mindustry.Vars;
 import mindustry.content.Fx;
 import mindustry.entities.Damage;
@@ -19,7 +19,6 @@ import mindustry.entities.Puddles;
 import mindustry.gen.Sounds;
 import mindustry.graphics.Pal;
 import mindustry.type.Liquid;
-import mindustry.type.LiquidStack;
 import mindustry.ui.Bar;
 import mindustry.world.Tile;
 import mindustry.world.draw.DrawBlock;
@@ -32,7 +31,7 @@ import mindustry.world.meta.StatUnit;
 import static mindustry.Vars.tilesize;
 import static mindustry.Vars.world;
 
-public class GeneratorCombo extends ComboBlock {
+public class GeneratorCustom extends CustomBlock {
     /** The amount of power produced per tick in case of an efficiency of 1.0, which represents 100%. */
     public float powerProduction;
     public Stat generationType = Stat.basePowerGeneration;
@@ -51,7 +50,7 @@ public class GeneratorCombo extends ComboBlock {
 
     public float explosionShake = 0f, explosionShakeDuration = 6f;
 
-    public GeneratorCombo(String name) {
+    public GeneratorCustom(String name) {
         super(name);
 
         sync = true;
@@ -103,7 +102,7 @@ public class GeneratorCombo extends ComboBlock {
 
     }
 
-    public class GeneratorComboBuild extends ComboBuilding {
+    public class GeneratorComboBuild extends CustomBuilding {
         public float generateTime;
         /** The efficiency of the producer. An efficiency of 1.0 means 100% */
         public float productionEfficiency = 0.0f;

@@ -5,6 +5,7 @@ import conceptm.generator.NameRegistry;
 import mindustry.world.meta.Stats;
 
 public class CustomUnlockable {
+    public short id;
     public String localizedName, name;
     public Stats stats = new Stats();
     public TextureRegion fullIcon;

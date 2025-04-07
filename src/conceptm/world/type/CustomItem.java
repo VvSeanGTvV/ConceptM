@@ -102,6 +102,10 @@ public class CustomItem extends CustomUnlockable {
         this.name = nameRegistry.generateRegistryKeyWithBracket(an, bn, "[", "]");
         createIcons(item1, item2, item1c, item2c);
         setStats();
+
+        short i0d = (item1 != null) ? item1.id : (item1c != null) ? item1c.id : (short) 0;
+        short i1d = (item2 != null) ? item2.id : (item2c != null) ? item2c.id : (short) 0;
+        this.id = (short) (i0d + i1d);
     }
 
     public CustomItem(Object item1, Object item2) {
