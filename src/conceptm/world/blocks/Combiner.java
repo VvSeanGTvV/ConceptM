@@ -200,8 +200,9 @@ public class Combiner extends CustomBlock {
             if (Mathf.clamp(progress * 3f) >= 1f) {
 
                 float op = Math.max(1f - progress * 2f, 0f);
+                float op1 = Math.max(1f - progress, 0f);
                 Draw.rect(botMidRegion, x, y);
-                if (output != null) output.draw(x, y, op * itemSize);
+                if (output != null) output.draw(x, y, op1 * itemSize);
 
                 Draw.xscl = Mathf.clamp(op);
                 Draw.rect(pistonRegion0, x - (7.25f + ((1f - Mathf.clamp(op)) * (itemSize / 2))), y);
