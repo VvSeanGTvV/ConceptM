@@ -197,24 +197,35 @@ public class Combiner extends CustomBlock {
             float offset = 2.65f;
             float itemSize = 6f;
 
-            float pr = (1f - progress) * itemSize;
-            float op = (progress) * (-itemSize);
+            if (Mathf.clamp(progress * 3f) >= 1f) {
 
-            if (select0 != null) Draw.rect(select0.fullIcon, x - (offset - (progress * (itemSize / 2))) * size, y , itemSize, itemSize);
-            if (select1 != null) Draw.rect(select1.fullIcon, x + (offset - (progress * (itemSize / 2))) * size, y, itemSize, itemSize);
+                float op = Math.max(1f - progress * 2f, 0f);
+                Draw.rect(botMidRegion, x, y);
+                if (output != null) output.draw(x, y, op * itemSize);
 
-            if (select0c != null) select0c.draw(x - (offset - (progress * (itemSize / 2))) * size, y, itemSize);
-            if (select1c != null) select1c.draw(x + (offset - (progress * (itemSize / 2))) * size, y, itemSize);
+                Draw.xscl = Mathf.clamp(op);
+                Draw.rect(pistonRegion0, x - (7.25f + ((1f - Mathf.clamp(op)) * (itemSize / 2))), y);
 
-            Draw.rect(botMidRegion, x, y);
-            if (output != null) output.draw(x, y, (progress * itemSize));
+                Draw.xscl = -Mathf.clamp(op);
+                Draw.rect(pistonRegion1, x + (7.25f + ((1f - Mathf.clamp(op)) * (itemSize / 2))), y);
+            } else {
+                if (select1 != null)
+                    Draw.rect(select1.fullIcon, x + (offset - (progress * (itemSize / 2)) * 3f) * size, y, itemSize, itemSize);
+                if (select0 != null)
+                    Draw.rect(select0.fullIcon, x - (offset - (progress * (itemSize / 2)) * 3f) * size, y, itemSize, itemSize);
 
-            Draw.xscl = Mathf.clamp(progress * 2f);
-            Draw.rect(pistonRegion0, x - (7.25f + ((1f - Mathf.clamp(progress * 2f)) * (itemSize / 2))), y);
+                if (select1c != null)
+                    select1c.draw(x + (offset - (progress * (itemSize / 2)) * 3f) * size, y, itemSize);
+                if (select0c != null)
+                    select0c.draw(x - (offset - (progress * (itemSize / 2)) * 3f) * size, y, itemSize);
 
-            Draw.xscl = -Mathf.clamp(progress * 2f);
-            Draw.rect(pistonRegion1, x + (7.25f + ((1f - Mathf.clamp(progress * 2f)) * (itemSize / 2))), y);
 
+                Draw.xscl = Mathf.clamp(progress * 3f);
+                Draw.rect(pistonRegion0, x - (7.25f + ((1f - Mathf.clamp(progress * 3f)) * (itemSize / 2))), y);
+
+                Draw.xscl = -Mathf.clamp(progress * 3f);
+                Draw.rect(pistonRegion1, x + (7.25f + ((1f - Mathf.clamp(progress * 3f)) * (itemSize / 2))), y);
+            }
             Draw.xscl = 1f;
 
             Draw.rect(region, x, y);
