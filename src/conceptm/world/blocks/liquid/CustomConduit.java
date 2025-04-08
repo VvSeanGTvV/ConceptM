@@ -18,6 +18,8 @@ import mindustry.world.blocks.Autotiler;
 import mindustry.world.blocks.distribution.ChainedBuilding;
 import mindustry.world.blocks.liquid.LiquidBlock;
 
+import java.util.Objects;
+
 import static mindustry.Vars.*;
 import static mindustry.type.Liquid.animationFrames;
 
@@ -196,16 +198,16 @@ public class CustomConduit extends CustomLiquidBlock implements Autotiler {
         @Override
         public boolean acceptCustomLiquid(Building source, CustomLiquid liquid) {
             noSleep();
-            return (customLiquids.current() == liquid || customLiquids.currentAmount() < 0.2f)
+            return (Objects.equals(customLiquids.current().name, liquid.name) || customLiquids.currentAmount() < 0.2f)
                     && (tile == null || source == this || (source.relativeTo(tile.x, tile.y) + 2) % 4 != rotation);
         }
 
         @Override
         public void updateTile(){
-            smoothLiquid = Mathf.lerpDelta(smoothLiquid, liquids.currentAmount() / liquidCapacity, 0.05f);
+            smoothLiquid = Mathf.lerpDelta(smoothLiquid, customLiquids.currentAmount() / customLiquidCapacity, 0.05f);
 
-            if(liquids.currentAmount() > 0.0001f && timer(timerFlow, 1)){
-                moveLiquidForward(leaks, liquids.current());
+            if(customLiquids.currentAmount() > 0.0001f && timer(timerFlow, 1)){
+                moveLiquidForward(customLiquids.current());
                 noSleep();
             }else{
                 sleep();

@@ -3,233 +3,329 @@ package conceptm.generator;
 import conceptm.world.type.*;
 import mindustry.content.StatusEffects;
 import mindustry.type.*;
+import java.util.*;
 
 public class DynamicNameGenerator {
-    private static final String[] COMMON_SUFFIXES = {
-            "ite", "ium", "ide", "ate", "ine", "ite", "on", "alloy", "comp", "synth"
-    };
+    // Special combinations
+    private static final Map<String, Map<String, String>> SPECIAL_COMBINATIONS = new HashMap<>();
 
-    private static final String[] GAS_PARTS = {
-            "vapor", "gas", "aero", "pneu", "wind", "steam", "fume", "mist"
-    };
+    // Phoneme patterns for different material types
+    private static final Map<String, String[]> PHONEME_PATTERNS = new HashMap<>();
 
-    private static String removeCommonSuffixes(String name) {
-        for (String suffix : COMMON_SUFFIXES) {
-            if (name.toLowerCase().endsWith(suffix)) {
-                return name.substring(0, name.length() - suffix.length());
+    static {
+        // Initialize special combinations
+        Map<String, String> leadCombos = new HashMap<>();
+        leadCombos.put("sand", "metaglass");
+        SPECIAL_COMBINATIONS.put("lead", leadCombos);
+
+        Map<String, String> sporeCombos = new HashMap<>();
+        sporeCombos.put("water", "sporepod");
+        SPECIAL_COMBINATIONS.put("spore", sporeCombos);
+
+        Map<String, String> waterCombos = new HashMap<>();
+        waterCombos.put("oil", "emulsion");
+        SPECIAL_COMBINATIONS.put("water", waterCombos);
+
+        // Phoneme patterns by material type
+        PHONEME_PATTERNS.put("metal", new String[]{
+                "br", "cr", "dr", "fr", "gr", "kr", "str",
+                "tr", "vr", "zr", "thr", "chr", "phr"
+        });
+
+        PHONEME_PATTERNS.put("liquid", new String[]{
+                "fl", "gl", "pl", "sl", "vl", "zl",
+                "shr", "spl", "spr", "thl"
+        });
+
+        PHONEME_PATTERNS.put("organic", new String[]{
+                "bl", "cl", "dl", "fl", "gl", "kl",
+                "pl", "sl", "chl", "phl", "scl"
+        });
+    }
+
+    public static String generateName(Object a, Object b) {
+        // Check special combinations first
+        String specialName = checkSpecialCombinations(a, b);
+        if (specialName != null) {
+            return capitalize(specialName);
+        }
+
+        MaterialProfile profileA = new MaterialProfile(a);
+        MaterialProfile profileB = new MaterialProfile(b);
+
+        // Generate name based on material types
+        if (profileA.isLiquid || profileB.isLiquid) {
+            return generateLiquidBasedName(profileA, profileB);
+        } else {
+            return generateSolidName(profileA, profileB);
+        }
+    }
+
+    private static String generateLiquidBasedName(MaterialProfile a, MaterialProfile b) {
+        // Determine which is liquid
+        MaterialProfile liquid = a.isLiquid ? a : b;
+        MaterialProfile other = a.isLiquid ? b : a;
+
+        // Generate core name
+        String coreName = generateCoreName(liquid, other);
+
+        // Add appropriate suffix
+        String suffix = generateSuffix(liquid, other);
+
+        return capitalize(coreName + suffix);
+    }
+
+    private static String generateCoreName(MaterialProfile a, MaterialProfile b) {
+        // Get phoneme patterns for both materials
+        String[] patternsA = getPhonemePatterns(a);
+        String[] patternsB = getPhonemePatterns(b);
+
+        // Generate multiple candidates
+        List<String> candidates = new ArrayList<>();
+
+        // 1. Pattern blending
+        candidates.add(blendPhonemePatterns(
+                patternsA[new Random().nextInt(patternsA.length)],
+                patternsB[new Random().nextInt(patternsB.length)]
+        ));
+
+        // 2. Name fragment blending
+        candidates.add(blendNameFragments(
+                getMeaningfulFragment(a.baseName),
+                getMeaningfulFragment(b.baseName)
+        ));
+
+        // 3. Phoneme construction
+        candidates.add(constructFromPhonemes(a, b));
+
+        // Select best candidate
+        return selectBestCandidate(candidates);
+    }
+
+    private static String blendPhonemePatterns(String patternA, String patternB) {
+        // Find natural blending point
+        int blendPoint = Math.min(patternA.length(), patternB.length()) / 2;
+        return patternA.substring(0, blendPoint) + patternB.substring(blendPoint);
+    }
+
+    private static String blendNameFragments(String fragmentA, String fragmentB) {
+        // Find vowel transitions
+        int splitA = findLastVowel(fragmentA);
+        int splitB = findFirstVowel(fragmentB);
+
+        if (splitA > 0 && splitB > 0) {
+            return fragmentA.substring(0, splitA) + fragmentB.substring(splitB);
+        }
+        return fragmentA + fragmentB;
+    }
+
+    private static String constructFromPhonemes(MaterialProfile a, MaterialProfile b) {
+        // Get characteristic phonemes
+        String phonemesA = getCharacteristicPhonemes(a);
+        String phonemesB = getCharacteristicPhonemes(b);
+
+        // Combine distinct phonemes
+        Set<String> combined = new LinkedHashSet<>();
+        combined.addAll(Arrays.asList(phonemesA.split(" ")));
+        combined.addAll(Arrays.asList(phonemesB.split(" ")));
+
+        // Build new word
+        StringBuilder builder = new StringBuilder();
+        for (String phoneme : combined) {
+            builder.append(phoneme);
+        }
+        return builder.toString();
+    }
+
+    private static String generateSuffix(MaterialProfile liquid, MaterialProfile other) {
+        if (other.isLiquid) {
+            // Liquid + liquid combination
+            return "";
+        } else if (other.isOrganic) {
+            // Liquid + organic
+            return "ose";
+        } else {
+            // Liquid + solid
+            return "ite";
+        }
+    }
+
+    private static String generateSolidName(MaterialProfile a, MaterialProfile b) {
+        String coreName = generateCoreName(a, b);
+        String suffix = generateSolidSuffix(a, b);
+        return capitalize(coreName + suffix);
+    }
+
+    private static String generateSolidSuffix(MaterialProfile a, MaterialProfile b) {
+        if (a.isMetal && b.isMetal) {
+            return "ite";
+        } else if (a.isCrystal || b.isCrystal) {
+            return "ium";
+        } else if (a.isOrganic || b.isOrganic) {
+            return "in";
+        }
+        return "ide";
+    }
+
+    private static String[] getPhonemePatterns(MaterialProfile profile) {
+        if (profile.isLiquid) return PHONEME_PATTERNS.get("liquid");
+        if (profile.isOrganic) return PHONEME_PATTERNS.get("organic");
+        if (profile.isMetal) return PHONEME_PATTERNS.get("metal");
+        return PHONEME_PATTERNS.get("metal"); // default
+    }
+
+    private static String getMeaningfulFragment(String name) {
+        if (name == null || name.isEmpty()) return "";
+        name = name.toLowerCase().replaceAll("[^a-z]", "");
+
+        // Remove common suffixes
+        String[] suffixes = {"ite", "ium", "ide", "ate", "ine"};
+        for (String suffix : suffixes) {
+            if (name.endsWith(suffix) && name.length() > suffix.length()) {
+                name = name.substring(0, name.length() - suffix.length());
+                break;
             }
         }
-        return name;
-    }
 
-    private static boolean isGoodBlend(String blended) {
-        // Simple heuristic - at least 5 characters and not too long
-        return blended.length() >= 5 && blended.length() <= 12;
-    }
-    private static String getMeaningfulPart(String name) {
-        // Try to find the stem of the word
-        String clean = removeCommonSuffixes(name);
-
-        // Take first 3-4 meaningful characters
-        int length = Math.min(4, clean.length());
-        if (isVowel(clean.charAt(length-1)) && length > 1) {
-            length--; // Avoid ending with vowel
+        // Take meaningful part
+        int length = Math.min(5, name.length());
+        if (length > 3 && isVowel(name.charAt(length-1))) {
+            length--;
         }
-        return clean.substring(0, length);
+        return name.substring(0, length);
+    }
+
+    private static String getCharacteristicPhonemes(MaterialProfile profile) {
+        // This would analyze the name for characteristic sound patterns
+        // Simplified version for demonstration
+        String name = profile.baseName.toLowerCase();
+        if (name.contains("chr") || name.contains("phr")) return "chr phr";
+        if (name.contains("sp")) return "sp spr spl";
+        if (name.contains("tr")) return "tr thr str";
+        return "br cr dr fr gr";
+    }
+
+    private static String selectBestCandidate(List<String> candidates) {
+        // Score based on linguistic qualities
+        return candidates.stream()
+                .max(Comparator.comparingInt(c -> scoreName(c)))
+                .orElse("compound");
+    }
+
+    private static int scoreName(String name) {
+        int score = 0;
+        if (name.length() >= 4 && name.length() <= 8) score += 3;
+        if (countVowels(name) >= 2) score += 2;
+        if (!name.matches(".*(.)\\1{2,}.*")) score += 1; // No triple letters
+        return score;
+    }
+
+    private static int countVowels(String word) {
+        int count = 0;
+        for (char c : word.toCharArray()) {
+            if (isVowel(c)) count++;
+        }
+        return count;
     }
 
     private static boolean isVowel(char c) {
-        return "aeiouAEIOU".indexOf(c) != -1;
+        return "aeiou".indexOf(Character.toLowerCase(c)) != -1;
     }
 
-    public static String generateName(Object a, Object b, boolean isLiquid) {
-        // First try linguistic blending
-        var ia = (a instanceof Item i0) ? i0.localizedName : (a instanceof CustomItem c0) ? c0.localizedName : (a instanceof Liquid i0) ? i0.localizedName : (a instanceof CustomLiquid c0) ? c0.localizedName : null;
-        var ib = (b instanceof Item i1) ? i1.localizedName : (b instanceof CustomItem c1) ? c1.localizedName : (b instanceof Liquid i1) ? i1.localizedName : (b instanceof CustomLiquid c1) ? c1.localizedName : null;
-        String blended = blendNamesLinguistically(ia, ib);
-        if (isGoodBlend(blended)) {
-            return blended;
+    private static int findLastVowel(String word) {
+        for (int i = word.length()-1; i >= 0; i--) {
+            if (isVowel(word.charAt(i))) return i;
         }
+        return -1;
+    }
 
-        String suffix = determineSuffix(a, b);
-        if (!isLiquid) {
-            // Fall back to material-based generation
-            MaterialType typeA = classifyMaterial(a);
-            MaterialType typeB = classifyMaterial(b);
-
-            if (typeA == MaterialType.METAL && typeB == MaterialType.METAL) {
-                return generateMetalName(ia, ib, suffix);
-            } else if (typeA == MaterialType.CRYSTAL || typeB == MaterialType.CRYSTAL) {
-                return generateCrystalName(ia, ib, suffix);
-            } else if (typeA == MaterialType.ORGANIC || typeB == MaterialType.ORGANIC) {
-                return generateOrganicName(ia, ib, suffix);
-            } else {
-                return generateDefaultName(ia, ib, suffix);
-            }
-        } else {
-            // Fall back to material-based generation
-            LiquidType typeA = classifyLiquid(ia);
-            LiquidType typeB = classifyLiquid(ib);
-            boolean Agas = (a instanceof Liquid i0) ? i0.gas : a instanceof CustomLiquid c0 && c0.gas;
-            boolean Bgas = (b instanceof Liquid i1) ? i1.gas : b instanceof CustomLiquid c1 && c1.gas;
-
-            if (typeA == LiquidType.METAL && typeB == LiquidType.METAL) {
-                return generateMetalName(ia, ib, suffix);
-            } else if (typeA == LiquidType.CRYSTAL || typeB == LiquidType.CRYSTAL) {
-                return generateCrystalName(ia, ib, suffix);
-            } else if (typeA == LiquidType.ORGANIC || typeB == LiquidType.ORGANIC) {
-                return generateOrganicName(ia, ib, suffix);
-            } else if (Agas || Bgas) {
-                return generateGasName(ia, ib, suffix);
-            } else {
-                return generateDefaultName(ia, ib, suffix);
-            }
+    private static int findFirstVowel(String word) {
+        for (int i = 0; i < word.length(); i++) {
+            if (isVowel(word.charAt(i))) return i;
         }
-    }
-
-    private enum MaterialType { METAL, CRYSTAL, ORGANIC, OTHER }
-    private enum LiquidType { METAL, CRYSTAL, ORGANIC, GAS, OTHER }
-
-    private static LiquidType classifyLiquid(Object liquid) {
-        if (liquid instanceof Liquid a) {
-            if (a.temperature > 0.7f && !a.gas) {
-                return LiquidType.METAL;
-            } else if (a.temperature < 0.3f && a.heatCapacity > 0.4f) {
-                return LiquidType.CRYSTAL;
-            } else if (a.effect != StatusEffects.none || a.localizedName.contains("bio")) {
-                return LiquidType.ORGANIC;
-            } else if (a.gas) {
-                return LiquidType.GAS;
-            }
-        }
-
-        if (liquid instanceof CustomLiquid a) {
-            if (a.temperature > 0.7f && !a.gas) {
-                return LiquidType.METAL;
-            } else if (a.temperature < 0.3f && a.heatCapacity > 0.4f) {
-                return LiquidType.CRYSTAL;
-            } else if (a.effect != StatusEffects.none || a.localizedName.contains("bio")) {
-                return LiquidType.ORGANIC;
-            } else if (a.gas) {
-                return LiquidType.GAS;
-            }
-        }
-
-        return LiquidType.OTHER;
-    }
-
-
-    private static MaterialType classifyMaterial(Object item) {
-        if (item instanceof Item a) {
-            if (a.hardness > 4 && a.flammability < 0.3f) {
-                return MaterialType.METAL;
-            } else if (a.hardness > 5 && a.radioactivity < 0.2f) {
-                return MaterialType.CRYSTAL;
-            } else if (a.flammability > 0.5f || a.localizedName.contains("flesh")) {
-                return MaterialType.ORGANIC;
-            }
-        }
-
-        if (item instanceof CustomItem a) {
-            if (a.hardness > 4 && a.flammability < 0.3f) {
-                return MaterialType.METAL;
-            } else if (a.hardness > 5 && a.radioactivity < 0.2f) {
-                return MaterialType.CRYSTAL;
-            } else if (a.flammability > 0.5f || a.localizedName.contains("flesh")) {
-                return MaterialType.ORGANIC;
-            }
-        }
-        return MaterialType.OTHER;
-    }
-
-    private static String generateGasName(String a, String b, String suffix) {
-        String part1 = GAS_PARTS[Math.abs(a.hashCode()) % GAS_PARTS.length];
-        String part2 = getMeaningfulPart(b);
-        return capitalize(part1 + part2 + suffix);
-    }
-
-    private static String generateMetalName(String a, String b, String suffix) {
-        String base = getMeaningfulPart(a) + getMeaningfulPart(b);
-        return capitalize(base + suffix);
-    }
-
-    private static String generateCrystalName(String a, String b, String suffix) {
-        String part1 = getMeaningfulPart(a);
-        String part2 = getMeaningfulPart(b);
-        return capitalize(part1 + part2 + "ite");
-    }
-
-    private static String generateOrganicName(String a, String b, String suffix) {
-        String part1 = getMeaningfulPart(a);
-        String part2 = getMeaningfulPart(b);
-        return capitalize(part1 + part2 + "ium");
-    }
-
-    private static String generateDefaultName(String a, String b, String suffix) {
-        String partA = getMeaningfulPart(a);
-        String partB = getMeaningfulPart(b);
-        return capitalize(partA + partB + suffix);
-    }
-
-    private static String getBaseName(String itemName) {
-        String name = itemName.replaceAll("(ite|ium|ide)$", "");
-        return name.substring(0, Math.min(4, name.length()));
+        return -1;
     }
 
     private static String capitalize(String str) {
-        return str.substring(0, 1).toUpperCase() + str.substring(1);
+        if (str == null || str.isEmpty()) return str;
+        return Character.toUpperCase(str.charAt(0)) + str.substring(1);
     }
 
-    private static String blendNamesLinguistically(String name1, String name2) {
-        // Clean names by removing common suffixes
-        String clean1 = removeCommonSuffixes(name1);
-        String clean2 = removeCommonSuffixes(name2);
+    private static String checkSpecialCombinations(Object a, Object b) {
+        String nameA = getBaseName(a).toLowerCase();
+        String nameB = getBaseName(b).toLowerCase();
 
-        // Try to find natural blending points
-        int overlap = findBestOverlap(clean1, clean2);
-
-        if (overlap >= 2) {
-            // Good overlap found - blend at this point
-            return clean1.substring(0, clean1.length() - overlap) + clean2;
-        } else {
-            // No good overlap - take first half of first and second half of second
-            int split1 = clean1.length() / 2;
-            int split2 = clean2.length() / 2;
-            return clean1.substring(0, split1) + clean2.substring(split2);
+        if (SPECIAL_COMBINATIONS.containsKey(nameA)) {
+            String result = SPECIAL_COMBINATIONS.get(nameA).get(nameB);
+            if (result != null) return result;
         }
+        if (SPECIAL_COMBINATIONS.containsKey(nameB)) {
+            String result = SPECIAL_COMBINATIONS.get(nameB).get(nameA);
+            if (result != null) return result;
+        }
+        return null;
     }
 
-    private static int findBestOverlap(String a, String b) {
-        // Look for 2-3 character overlaps
-        for (int len = Math.min(3, Math.min(a.length(), b.length())); len >= 2; len--) {
-            String endOfA = a.substring(a.length() - len);
-            String startOfB = b.substring(0, len);
-            if (endOfA.equalsIgnoreCase(startOfB)) {
-                return len;
+    private static String getBaseName(Object obj) {
+        if (obj instanceof Item item) return item.localizedName;
+        if (obj instanceof CustomItem customItem) return customItem.localizedName;
+        if (obj instanceof Liquid liquid) return liquid.localizedName;
+        if (obj instanceof CustomLiquid customLiquid) return customLiquid.localizedName;
+        return "unknown";
+    }
+
+    private static class MaterialProfile {
+        public String baseName;
+        public boolean isMetal;
+        public boolean isCrystal;
+        public boolean isOrganic;
+        public boolean isLiquid;
+
+        public MaterialProfile(Object material) {
+            this.baseName = getBaseName(material);
+
+            if (material instanceof Item item) {
+                initItem(item);
+            } else if (material instanceof Liquid liquid) {
+                initLiquid(liquid);
+            } else if (material instanceof CustomItem customItem) {
+                initCustomItem(customItem);
+            } else if (material instanceof CustomLiquid customLiquid) {
+                initCustomLiquid(customLiquid);
+            }
+
+            // Ensure liquids aren't classified as metals
+            if (this.isLiquid) {
+                this.isMetal = false;
             }
         }
-        return 0;
-    }
 
-    private static String determineSuffix(Object a0, Object b0) {
+        private void initItem(Item item) {
+            this.isMetal = item.hardness > 4 && item.flammability < 0.3f;
+            this.isCrystal = item.hardness > 5 && item.radioactivity < 0.2f;
+            this.isOrganic = item.flammability > 0.5f || item.name.toLowerCase().contains("flesh");
+            this.isLiquid = false;
+        }
 
-        var aHard = (a0 instanceof Item item) ? item.hardness : (a0 instanceof CustomItem comboItem) ? comboItem.hardness : 0;
-        var bHard = (b0 instanceof Item item) ? item.hardness : (b0 instanceof CustomItem comboItem) ? comboItem.hardness : 0;
+        private void initLiquid(Liquid liquid) {
+            this.isLiquid = true;
+            this.isOrganic = liquid.effect != StatusEffects.none || liquid.name.toLowerCase().contains("bio");
+            this.isCrystal = liquid.temperature < 0.3f && liquid.heatCapacity > 0.4f;
+            this.isMetal = false; // Explicitly set to false for liquids
+        }
 
-        var aflame = (a0 instanceof Item item) ? item.flammability : (a0 instanceof CustomItem comboItem) ? comboItem.flammability : 0;
-        var bflame = (b0 instanceof Item item) ? item.flammability : (b0 instanceof CustomItem comboItem) ? comboItem.flammability : 0;
+        private void initCustomItem(CustomItem item) {
+            this.isMetal = item.hardness > 4 && item.flammability < 0.3f;
+            this.isCrystal = item.hardness > 5 && item.radioactivity < 0.2f;
+            this.isOrganic = item.flammability > 0.5f || item.name.toLowerCase().contains("flesh");
+            this.isLiquid = false;
+        }
 
-        var aradio = (a0 instanceof Item item) ? item.radioactivity : (a0 instanceof CustomItem comboItem) ? comboItem.radioactivity : 0;
-        var bradio = (b0 instanceof Item item) ? item.radioactivity : (b0 instanceof CustomItem comboItem) ? comboItem.radioactivity : 0;
-
-        float avgHardness = (aHard + bHard) / 2f;
-        float avgFlammability = (aflame + bflame) / 2f;
-        float avgRadioactivity = (aradio + bradio) / 2f;
-
-        if (avgRadioactivity > 0.7f) return "ite";
-        if (avgFlammability > 0.5f) return "ene";
-        if (avgHardness > 7f) return "ite";
-        if (avgHardness > 4f) return "ium";
-        return "ide";
+        private void initCustomLiquid(CustomLiquid liquid) {
+            this.isLiquid = true;
+            this.isOrganic = liquid.effect != StatusEffects.none || liquid.name.toLowerCase().contains("bio");
+            this.isCrystal = liquid.temperature < 0.3f && liquid.heatCapacity > 0.4f;
+            this.isMetal = false; // Explicitly set to false for liquids
+        }
     }
 }

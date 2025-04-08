@@ -1,16 +1,21 @@
 package conceptm.world.blocks;
 
 import arc.Core;
-import arc.util.Tmp;
+import arc.func.Func;
+import arc.graphics.Color;
+import arc.math.Mathf;
+import arc.util.*;
 import conceptm.world.modules.*;
 import conceptm.world.type.*;
 import mindustry.Vars;
+import mindustry.content.Fx;
+import mindustry.entities.Puddles;
 import mindustry.game.Team;
 import mindustry.gen.Building;
 import mindustry.graphics.Pal;
 import mindustry.type.*;
 import mindustry.ui.Bar;
-import mindustry.world.Block;
+import mindustry.world.*;
 
 public class CustomBlock extends Block {
     public int customItemCapacity = 10;
@@ -30,6 +35,18 @@ public class CustomBlock extends Block {
         if (this.hasCustomItem && this.configurable) {
             this.addBar("customItems", (CustomBuilding entity) -> new Bar(() -> Core.bundle.format("bar.combos", entity.customItems.total()), () -> Pal.items, () -> (float)entity.customItems.total() / (float)this.customItemCapacity));
         }
+
+        if (this.hasCustomLiquid) {
+            addCustomLiquidBar(build -> build.customLiquids.current());
+        }
+    }
+
+    public <T extends CustomBuilding> void addCustomLiquidBar(Func<T, CustomLiquid> current){
+        addBar("liquid", (CustomBuilding entity) -> new Bar(
+                () -> current.get((T)entity) == null || entity.customLiquids.get(current.get((T)entity)) <= 0.001f ? Core.bundle.get("bar.liquid") : current.get((T)entity).localizedName,
+                () -> current.get((T)entity) == null ? Color.clear : current.get((T)entity).barColor,
+                () -> current.get((T)entity) == null ? 0f : entity.customLiquids.get(current.get((T)entity)) / customLiquidCapacity)
+        );
     }
 
     public class CustomBuilding extends Building {
@@ -122,11 +139,12 @@ public class CustomBlock extends Block {
                     if (other != null) {
                         if (outputDir == -1 || (outputDir + this.rotation) % 4 == this.relativeTo(other)) {
                             other = other.getLiquidDestination(this, liquid);
-                            if (other.block instanceof CustomBlock customBlock && customBlock.hasCustomLiquid && this.canDumpLiquid(other, liquid) && other.liquids != null) {
+                            if (other.block instanceof CustomBlock customBlock && customBlock.hasCustomLiquid && this.canDumpLiquid(other, liquid) && other.customLiquids != null) {
                                 float ofract = other.customLiquids.get(liquid) / customBlock.customLiquidCapacity;
-                                float fract = this.customLiquids.get(liquid) / this.block.liquidCapacity;
+                                float fract = this.customLiquids.get(liquid) / customLiquidCapacity;
                                 if (ofract < fract) {
-                                    this.transferLiquid(other, (fract - ofract) * this.block.liquidCapacity / scaling, liquid);
+
+                                    this.transferLiquid(other, (fract - ofract) * customLiquidCapacity / scaling, liquid);
                                 }
                             }
                         }
@@ -135,8 +153,62 @@ public class CustomBlock extends Block {
             }
         }
 
+        public float moveLiquid(CustomBuilding next, CustomLiquid liquid) {
+            if (next == null) {
+                return 0.0F;
+            } else {
+                next = next.getLiquidDestination(this, liquid);
+                if (next.team == this.team && next.block.hasLiquids && this.customLiquids.get(liquid) > 0.0F) {
+                    float ofract = next.customLiquids.get(liquid) / ((CustomBlock) next.block).customLiquidCapacity;
+                    float fract = this.customLiquids.get(liquid) / customLiquidCapacity * this.block.liquidPressure;
+                    float flow = Math.min(Mathf.clamp(fract - ofract) * customLiquidCapacity, this.customLiquids.get(liquid));
+                    flow = Math.min(flow, ((CustomBlock) next.block).customLiquidCapacity - next.customLiquids.get(liquid));
+                    if (flow > 0.0F && ofract <= fract && next.acceptCustomLiquid(this, liquid)) {
+                        next.handeCustomLiquid(this, liquid, flow);
+                        this.customLiquids.remove(liquid, flow);
+                        return flow;
+                    }
+
+                    if (next.customLiquids.currentAmount() / ((CustomBlock) next.block).customLiquidCapacity > 0.1F && fract > 0.1F) {
+                        float fx = (this.x + next.x) / 2.0F;
+                        float fy = (this.y + next.y) / 2.0F;
+                        CustomLiquid other = next.customLiquids.current();
+                        if (other.blockReactive && liquid.blockReactive) {
+                            if ((!(other.flammability > 0.3F) || !(liquid.temperature > 0.7F)) && (!(liquid.flammability > 0.3F) || !(other.temperature > 0.7F))) {
+                                if (liquid.temperature > 0.7F && other.temperature < 0.55F || other.temperature > 0.7F && liquid.temperature < 0.55F) {
+                                    this.customLiquids.remove(liquid, Math.min(this.customLiquids.get(liquid), 0.7F * Time.delta));
+                                    if (Mathf.chanceDelta(0.20000000298023224)) {
+                                        Fx.steam.at(fx, fy);
+                                    }
+                                }
+                            } else {
+                                this.damageContinuous(1.0F);
+                                next.damageContinuous(1.0F);
+                                if (Mathf.chanceDelta(0.1)) {
+                                    Fx.fire.at(fx, fy);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                return 0.0F;
+            }
+        }
+
+        public float moveLiquidForward(CustomLiquid liquid) {
+            Tile next = this.tile.nearby(this.rotation);
+            if (next == null) {
+                return 0.0F;
+            } else if (next.build != null && next.build instanceof CustomBuilding nextCustom) {
+                return this.moveLiquid(nextCustom, liquid);
+            } else {
+                return 0.0F;
+            }
+        }
+
         public void transferLiquid(CustomBuilding next, float amount, CustomLiquid liquid) {
-            float flow = Math.min(next.block.liquidCapacity - next.customLiquids.get(liquid), amount);
+            float flow = Math.min(((CustomBlock) next.block).customLiquidCapacity  - next.customLiquids.get(liquid), amount);
             if (next.acceptCustomLiquid(this, liquid)) {
                 next.handeCustomLiquid(this, liquid, flow);
                 this.customLiquids.remove(liquid, flow);

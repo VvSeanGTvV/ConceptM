@@ -113,7 +113,7 @@ public class CustomLiquid extends CustomUnlockable {
         );
         this.gas = boolList.stream().reduce(false, Boolean::logicalOr);
 
-        this.color = blendColorsVibrant(
+        this.color = this.barColor = blendColorsVibrant(
                 (liq1 != null) ? liq1.color : (liq1c != null) ? liq1c.color : Color.lightGray.cpy(),
                 (liq2 != null) ? liq2.color : (liq2c != null) ? liq2c.color : Color.lightGray.cpy()
         );

@@ -13,7 +13,7 @@ public class NameRegistry {
         var bn = (b instanceof Item i1) ? i1.localizedName : (b instanceof CustomItem c1) ? c1.localizedName : (b instanceof Liquid i1) ? i1.localizedName : (b instanceof CustomLiquid c1) ? c1.localizedName : "null";
         String key = generateRegistryKey(an, bn);
 
-        return generatedNames.computeIfAbsent(key, k -> DynamicNameGenerator.generateName(a, b, isLiquid));
+        return generatedNames.computeIfAbsent(key, k -> DynamicNameGenerator.generateName(a, b));
     }
 
     public String generateRegistryKey(String a, String b) {
