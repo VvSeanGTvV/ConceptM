@@ -46,7 +46,23 @@ public class CustomBlock extends Block {
     }
 
     public <T extends CustomBuilding> void addCustomLiquidBar(Func<T, CustomLiquid> current){
-        addBar("liquid", (CustomBuilding entity) -> new Bar(
+        addBar("liquid-custom", (CustomBuilding entity) -> new Bar(
+                () -> current.get((T)entity) == null || entity.customLiquids.get(current.get((T)entity)) <= 0.001f ? Core.bundle.get("bar.liquid") : current.get((T)entity).localizedName,
+                () -> current.get((T)entity) == null ? Color.clear : current.get((T)entity).barColor,
+                () -> current.get((T)entity) == null ? 0f : entity.customLiquids.get(current.get((T)entity)) / customLiquidCapacity)
+        );
+    }
+
+    public <T extends Building> void addDynamicLiquidBar(Func<T, Liquid> current, String name){
+        addBar("liquid-" + name, (CustomBuilding entity) -> new Bar(
+                () -> current.get((T)entity) == null || entity.liquids.get(current.get((T)entity)) <= 0.001f ? Core.bundle.get("bar.liquid") : current.get((T)entity).localizedName,
+                () -> current.get((T)entity) == null ? Color.clear : current.get((T)entity).barColor,
+                () -> current.get((T)entity) == null ? 0f : entity.liquids.get(current.get((T)entity)) / customLiquidCapacity)
+        );
+    }
+
+    public <T extends CustomBuilding> void addDynamicCustomLiquidBar(Func<T, CustomLiquid> current, String name){
+        addBar("liquid-custom-" + name, (CustomBuilding entity) -> new Bar(
                 () -> current.get((T)entity) == null || entity.customLiquids.get(current.get((T)entity)) <= 0.001f ? Core.bundle.get("bar.liquid") : current.get((T)entity).localizedName,
                 () -> current.get((T)entity) == null ? Color.clear : current.get((T)entity).barColor,
                 () -> current.get((T)entity) == null ? 0f : entity.customLiquids.get(current.get((T)entity)) / customLiquidCapacity)
@@ -243,6 +259,10 @@ public class CustomBlock extends Block {
 
         public void consumeObject(Object item0, Object item1){
             consumeObject(item0, item1, 1);
+        }
+
+        public void consumeLiquidObject(Object item0, Object item1){
+            consumeObject(item0, item1, 1f);
         }
 
         public boolean canDump(Building to, CustomItem item) {
