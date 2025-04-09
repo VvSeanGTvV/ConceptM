@@ -23,7 +23,7 @@ import static conceptm.ModTemplate.ui;
 import static mindustry.Vars.content;
 
 public class Mixer extends CustomBlock {
-    public TextureRegion rotorRegion, topRegion;
+    public TextureRegion rotorRegion, topRegion, bottomRegion;
 
     public Mixer(String name) {
         super(name);
@@ -41,6 +41,7 @@ public class Mixer extends CustomBlock {
     @Override
     public void load() {
         super.load();
+        bottomRegion = Core.atlas.find(name + "-bottom");
         topRegion = Core.atlas.find(name + "-top");
         rotorRegion = Core.atlas.find(name + "-rotor");
     }
@@ -66,6 +67,7 @@ public class Mixer extends CustomBlock {
 
         @Override
         public void draw() {
+            Draw.rect(bottomRegion, x, y);
             Drawf.spinSprite(rotorRegion, x, y, totalProgress * 1f);
             Draw.rect(region, x, y);
             Draw.rect(topRegion, x, y);
