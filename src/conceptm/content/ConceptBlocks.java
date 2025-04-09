@@ -1,5 +1,6 @@
 package conceptm.content;
 
+import arc.graphics.Color;
 import conceptm.world.blocks.Combiner;
 import conceptm.world.blocks.CustomConveyor;
 import conceptm.world.blocks.liquid.*;
@@ -9,6 +10,10 @@ import mindustry.content.Items;
 import mindustry.gen.Sounds;
 import mindustry.type.Category;
 import mindustry.world.Block;
+import mindustry.world.draw.DrawDefault;
+import mindustry.world.draw.DrawFlame;
+import mindustry.world.draw.DrawLiquidTile;
+import mindustry.world.draw.DrawMulti;
 
 import static mindustry.type.ItemStack.with;
 

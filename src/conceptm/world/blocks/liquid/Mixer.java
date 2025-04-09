@@ -1,12 +1,18 @@
 package conceptm.world.blocks.liquid;
 
+import arc.Core;
+import arc.graphics.g2d.Draw;
+import arc.graphics.g2d.TextureRegion;
+import arc.math.Mathf;
 import arc.scene.ui.layout.Table;
 import arc.struct.*;
 import arc.util.Log;
+import arc.util.Time;
 import conceptm.world.blocks.CustomBlock;
 import conceptm.world.type.*;
 import mindustry.Vars;
 import mindustry.gen.*;
+import mindustry.graphics.Drawf;
 import mindustry.type.*;
 import mindustry.ui.Styles;
 import mindustry.world.meta.*;
@@ -17,9 +23,12 @@ import static conceptm.ModTemplate.ui;
 import static mindustry.Vars.content;
 
 public class Mixer extends CustomBlock {
+    public TextureRegion rotorRegion, topRegion;
+
     public Mixer(String name) {
         super(name);
 
+        hasCustomItem = false;
         hasCustomLiquid = hasLiquids = true;
         update = true;
         solid = true;
@@ -30,6 +39,13 @@ public class Mixer extends CustomBlock {
     }
 
     @Override
+    public void load() {
+        super.load();
+        topRegion = Core.atlas.find(name + "-top");
+        rotorRegion = Core.atlas.find(name + "-rotor");
+    }
+
+    @Override
     public void setBars() {
         super.setBars();
 
@@ -37,6 +53,9 @@ public class Mixer extends CustomBlock {
     }
 
     public class MixerBuild extends CustomBuilding {
+        public float warmup;
+        public float totalProgress;
+
         @Override
         public boolean acceptLiquid(Building source, Liquid liquid) {
             return this.block.hasLiquids;
@@ -44,6 +63,13 @@ public class Mixer extends CustomBlock {
 
         public Liquid select0, select1;
         public CustomLiquid output, select0c, select1c;
+
+        @Override
+        public void draw() {
+            Drawf.spinSprite(rotorRegion, x, y, totalProgress * 1f);
+            Draw.rect(region, x, y);
+            Draw.rect(topRegion, x, y);
+        }
 
         @Override
         public void buildConfiguration(Table table) {
@@ -98,6 +124,15 @@ public class Mixer extends CustomBlock {
         @Override
         public void updateTile() {
             float min = 1f;
+
+            if (efficiency > 0){
+                warmup = Mathf.lerpDelta(warmup, 1f, 0.02f);
+            } else {
+                warmup = Mathf.approachDelta(warmup, 0f, 0.02f);
+            }
+
+            //TODO may look bad, revert to edelta() if so
+            totalProgress += warmup * edelta();
 
             boolean valid = (select0 != null && select1 != null && (liquids.get(select0) > min) && (liquids.get(select0) >= min)) ||
                     (select0c != null && select1 != null && (customLiquids.get(select0c) > min)  && (liquids.get(select1) >= min) ) ||

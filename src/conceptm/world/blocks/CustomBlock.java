@@ -16,6 +16,8 @@ import mindustry.graphics.Pal;
 import mindustry.type.*;
 import mindustry.ui.Bar;
 import mindustry.world.*;
+import mindustry.world.draw.DrawBlock;
+import mindustry.world.draw.DrawDefault;
 
 public class CustomBlock extends Block {
     public int customItemCapacity = 10;
@@ -23,6 +25,8 @@ public class CustomBlock extends Block {
     public float customLiquidCapacity = 10f;
 
     public boolean hasCustomItem = true, hasCustomLiquid = false;
+
+    public DrawBlock drawer = new DrawDefault();
 
     public CustomBlock(String name) {
         super(name);
@@ -277,6 +281,11 @@ public class CustomBlock extends Block {
 
         public int getMaximumAccepted(CustomItem item) {
             return customItemCapacity;
+        }
+
+        @Override
+        public void draw(){
+            drawer.draw(this);
         }
     }
 }
