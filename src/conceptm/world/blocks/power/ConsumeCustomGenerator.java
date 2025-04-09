@@ -72,7 +72,7 @@ public class ConsumeCustomGenerator extends GeneratorCustom {
         @Override
         public void updateTile(){
 
-            efficiency((customItems.any()) ? 1f : 0f);
+            efficiency((customItems.any() && item != null) ? 1f : 0f);
             boolean valid = efficiency > 0;
 
             warmup = Mathf.lerpDelta(warmup, valid ? 1f : 0f, warmupSpeed);
@@ -116,9 +116,9 @@ public class ConsumeCustomGenerator extends GeneratorCustom {
         @Override
         public void handeCustomItem(Building source, CustomItem item) {
             if (item.flammability > 0) {
-            super.handeCustomItem(source, item);
-            this.item = item;
-            updateEfficiencyMultiplier();
+                super.handeCustomItem(source, item);
+                this.item = item;
+                updateEfficiencyMultiplier();
             }
         }
 

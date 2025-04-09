@@ -195,6 +195,7 @@ public class Combiner extends CustomBlock {
             Draw.rect(botRegion, x, y);
 
             float offset = 2.65f;
+            float pistonOffset = 7.4f;
             float itemSize = 6f;
 
             if (Mathf.clamp(progress * 3f) >= 1f) {
@@ -205,10 +206,10 @@ public class Combiner extends CustomBlock {
                 if (output != null) output.draw(x, y, op1 * itemSize);
 
                 Draw.xscl = Mathf.clamp(op);
-                Draw.rect(pistonRegion0, x - (7.25f + ((1f - Mathf.clamp(op)) * (itemSize / 2))), y);
+                if (Mathf.clamp(op) > 0f) Draw.rect(pistonRegion0, x - (pistonOffset + ((1f - Mathf.clamp(op)) * (itemSize / 2))), y);
 
                 Draw.xscl = -Mathf.clamp(op);
-                Draw.rect(pistonRegion1, x + (7.25f + ((1f - Mathf.clamp(op)) * (itemSize / 2))), y);
+                if (Mathf.clamp(op) > 0f) Draw.rect(pistonRegion1, x + (pistonOffset + ((1f - Mathf.clamp(op)) * (itemSize / 2))), y);
             } else {
                 if (select1 != null)
                     Draw.rect(select1.fullIcon, x + (offset - (progress * (itemSize / 2)) * 3f) * size, y, itemSize, itemSize);
@@ -222,10 +223,10 @@ public class Combiner extends CustomBlock {
 
 
                 Draw.xscl = Mathf.clamp(progress * 3f);
-                Draw.rect(pistonRegion0, x - (7.25f + ((1f - Mathf.clamp(progress * 3f)) * (itemSize / 2))), y);
+                if (Mathf.clamp(progress * 3f) > 0f) Draw.rect(pistonRegion0, x - (pistonOffset + ((1f - Mathf.clamp(progress * 3f)) * (itemSize / 2))), y);
 
                 Draw.xscl = -Mathf.clamp(progress * 3f);
-                Draw.rect(pistonRegion1, x + (7.25f + ((1f - Mathf.clamp(progress * 3f)) * (itemSize / 2))), y);
+                if (Mathf.clamp(progress * 3f) > 0f) Draw.rect(pistonRegion1, x + (pistonOffset + ((1f - Mathf.clamp(progress * 3f)) * (itemSize / 2))), y);
             }
             Draw.xscl = 1f;
 
