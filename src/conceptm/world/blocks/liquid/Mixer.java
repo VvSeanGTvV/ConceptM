@@ -128,7 +128,6 @@ public class Mixer extends CustomBlock {
                 select0c = select1c = null;
             }
 
-            Log.info(valid);
             if (valid) combine(min);
         }
     }

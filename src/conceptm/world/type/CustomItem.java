@@ -99,7 +99,7 @@ public class CustomItem extends CustomUnlockable {
         String bn = (b0 instanceof Item bi) ? bi.name : (b0 instanceof CustomItem bc) ? bc.name : "";
 
         this.localizedName = name;
-        this.name = nameRegistry.generateRegistryKeyWithBracket(an, bn, "[", "]");
+        this.name = nameRegistry.generateRegistryKeyWithBracket(an, bn, "{", "}");
         createIcons(item1, item2, item1c, item2c);
         setStats();
 

@@ -7,6 +7,7 @@ import arc.struct.OrderedMap;
 import arc.struct.Seq;
 import arc.util.Scaling;
 import conceptm.world.type.*;
+import mindustry.Vars;
 import mindustry.gen.Icon;
 import mindustry.graphics.Pal;
 import mindustry.input.Binding;
@@ -81,7 +82,10 @@ public class ModdedContentInfoDialog extends BaseDialog {
         table.row();
 
         table.table(a -> {
-            if (Item.item1 != null) a.image(Item.item1.fullIcon).pad(4f);
+            if (Item.item1 != null) {
+                a.image(Item.item1.fullIcon).pad(4f);
+                a.button("?", Styles.flatBordert, () -> Vars.ui.content.show(Item.item1)).size(40f).pad(10).right().grow();
+            }
             else if (Item.item1c != null) {
                 a.image(Item.item1c.fullIcon).color(Item.item1c.color).pad(4f);
                 a.button("?", Styles.flatBordert, () -> ui.content.showItem(Item.item1c)).size(40f).pad(10).right().grow();
@@ -89,7 +93,10 @@ public class ModdedContentInfoDialog extends BaseDialog {
             else a.add("?").pad(4f);
 
             a.add("+").pad(4f);
-            if (Item.item2 != null) a.image(Item.item2.fullIcon).pad(4f);
+            if (Item.item2 != null) {
+                a.image(Item.item2.fullIcon).pad(4f);
+                a.button("?", Styles.flatBordert, () -> Vars.ui.content.show(Item.item2)).size(40f).pad(10).right().grow();
+            }
             else if (Item.item2c != null) {
                 a.image(Item.item2c.fullIcon).color(Item.item2c.color).pad(4f);
                 a.button("?", Styles.flatBordert, () -> ui.content.showItem(Item.item2c)).size(40f).pad(10).right().grow();
@@ -121,7 +128,10 @@ public class ModdedContentInfoDialog extends BaseDialog {
         table.row();
 
         table.table(a -> {
-            if (Liquid.liq1 != null) a.image(Liquid.liq1.fullIcon).pad(4f);
+            if (Liquid.liq1 != null) {
+                a.image(Liquid.liq1.fullIcon).pad(4f);
+                a.button("?", Styles.flatBordert, () -> Vars.ui.content.show(Liquid.liq1)).size(40f).pad(10).right().grow();
+            }
             else if (Liquid.liq1c != null) {
                 a.image(Liquid.liq1c.fullIcon).color(Liquid.liq1c.color).pad(4f);
                 a.button("?", Styles.flatBordert, () -> ui.content.showLiquid(Liquid.liq1c)).size(40f).pad(10).right().grow();
@@ -129,7 +139,10 @@ public class ModdedContentInfoDialog extends BaseDialog {
             else a.add("?").pad(4f);
 
             a.add("+").pad(4f);
-            if (Liquid.liq2 != null) a.image(Liquid.liq2.fullIcon).pad(4f);
+            if (Liquid.liq2 != null) {
+                a.image(Liquid.liq2.fullIcon).pad(4f);
+                a.button("?", Styles.flatBordert, () -> Vars.ui.content.show(Liquid.liq2)).size(40f).pad(10).right().grow();
+            }
             else if (Liquid.liq2c != null) {
                 a.image(Liquid.liq2c.fullIcon).color(Liquid.liq2c.color).pad(4f);
                 a.button("?", Styles.flatBordert, () -> ui.content.showLiquid(Liquid.liq2c)).size(40f).pad(10).right().grow();

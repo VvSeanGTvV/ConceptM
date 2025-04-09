@@ -122,7 +122,7 @@ public class CustomLiquid extends CustomUnlockable {
         String bn = (b0 instanceof Liquid bi) ? bi.name : (b0 instanceof CustomLiquid bc) ? bc.name : "";
 
         this.localizedName = name;
-        this.name = nameRegistry.generateRegistryKeyWithBracket(an, bn, "[", "]");
+        this.name = nameRegistry.generateRegistryKeyWithBracket(an, bn, "{", "}");
         createIcons(liq1, liq2, liq1c, liq2c);
         setStats();
 
