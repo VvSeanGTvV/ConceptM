@@ -127,7 +127,12 @@ public class Mixer extends CustomBlock {
         public void updateTile() {
             float min = 1f;
 
-            if (efficiency > 0){
+            boolean valid = (select0 != null && select1 != null && (liquids.get(select0) > min) && (liquids.get(select0) >= min)) ||
+                    (select0c != null && select1 != null && (customLiquids.get(select0c) > min)  && (liquids.get(select1) >= min) ) ||
+                    (select0 != null && select1c != null && (customLiquids.get(select1c) > min)  && (liquids.get(select0) >= min) ) ||
+                    (select0c != null && select1c != null && (customLiquids.get(select0c) > min)  && (customLiquids.get(select1c) >= min) );
+
+            if (valid){
                 warmup = Mathf.lerpDelta(warmup, 1f, 0.02f);
             } else {
                 warmup = Mathf.approachDelta(warmup, 0f, 0.02f);
@@ -135,12 +140,7 @@ public class Mixer extends CustomBlock {
 
             //TODO may look bad, revert to edelta() if so
             totalProgress += warmup * edelta();
-
-            boolean valid = (select0 != null && select1 != null && (liquids.get(select0) > min) && (liquids.get(select0) >= min)) ||
-                    (select0c != null && select1 != null && (customLiquids.get(select0c) > min)  && (liquids.get(select1) >= min) ) ||
-                    (select0 != null && select1c != null && (customLiquids.get(select1c) > min)  && (liquids.get(select0) >= min) ) ||
-                    (select0c != null && select1c != null && (customLiquids.get(select0c) > min)  && (customLiquids.get(select1c) >= min) );
-
+            
             if (liquids != null) {
                 for (Liquid liq : content.liquids()) {
                     if (select0 == null && (liquids.get(liq) > min) && select0c == null && liq != select1) select0 = liq;
