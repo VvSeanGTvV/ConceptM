@@ -11,6 +11,7 @@ import arc.util.Time;
 import conceptm.world.blocks.CustomBlock;
 import conceptm.world.type.*;
 import mindustry.Vars;
+import mindustry.content.Fx;
 import mindustry.gen.*;
 import mindustry.graphics.Drawf;
 import mindustry.type.*;
@@ -174,30 +175,6 @@ public class Mixer extends CustomLiquidBlock {
             } else {
                 warmup = Mathf.approachDelta(warmup, 0f, 0.02f);
             }
-
-            /*if (!onceBar0) {
-                if (select0 != null && (liquids.get(select0) > min)) {
-                    addDynamicLiquidBar((MixerBuild build) -> build.select0, select0.name);
-                    onceBar0 = true;
-                }
-
-                if (select0c != null && (customLiquids.get(select0c) > min)) {
-                    addDynamicCustomLiquidBar((MixerBuild build) -> build.select0c, select0c.name);
-                    onceBar0 = true;
-                }
-            }
-
-            if (!onceBar1) {
-                if (select1 != null  && (liquids.get(select1) > min)) {
-                    addDynamicLiquidBar((MixerBuild build) -> build.select1, select1.name);
-                    onceBar1 = true;
-                }
-
-                if (select1c != null && (customLiquids.get(select1c) > min)) {
-                    addDynamicCustomLiquidBar((MixerBuild build) -> build.select1c, select1c.name);
-                    onceBar1 = true;
-                }
-            }*/
             
             totalProgress += warmup * edelta();
             
@@ -215,7 +192,37 @@ public class Mixer extends CustomLiquidBlock {
                 }
             }
 
-            if (valid) combine(min);
+
+            if (valid) {
+                reactLiquid(min);
+                combine(min);
+            }
+        }
+
+        public void reactLiquid(float min){
+            float otherflame = (select1 != null && liquids != null && (liquids.get(select1) > min)) ? select1.flammability :
+                    (select1c != null && customLiquids != null && (customLiquids.get(select1c) > min)) ? select1c.flammability : 0f;
+
+            float destflame = (select0 != null && liquids != null && (liquids.get(select0) > min)) ? select0.flammability :
+                    (select0c != null && customLiquids != null && (customLiquids.get(select0c) > min)) ? select0c.flammability : 0f;
+
+            float othertemp = (select1 != null && liquids != null && (liquids.get(select1) > min)) ? select1.temperature :
+                    (select1c != null && customLiquids != null && (customLiquids.get(select1c) > min)) ? select1c.temperature : 0f;
+
+            float desttemp = (select0 != null && liquids != null && (liquids.get(select0) > min)) ? select0.temperature :
+                    (select0c != null && customLiquids != null && (customLiquids.get(select0c) > min)) ? select0c.temperature : 0f;
+
+            if ((!(otherflame > 0.3F) || !(desttemp > 0.7F)) && (!(destflame > 0.3F) || !(othertemp > 0.7F))) {
+                if (desttemp > 0.7F && othertemp < 0.55F || othertemp > 0.7F && desttemp < 0.55F) {
+                    if (Mathf.chanceDelta(0.20000000298023224)) {
+                        Fx.steam.at(x, y);
+                    }
+                }
+            } else {
+                if (Mathf.chanceDelta(0.1)) {
+                    Fx.fire.at(x, y);
+                }
+            }
         }
     }
 }

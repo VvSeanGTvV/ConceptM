@@ -193,8 +193,8 @@ public class CustomConduit extends CustomLiquidBlock implements Autotiler {
             blending = bits[4];
 
             Building next = front(), prev = back();
-            capped = next == null || next.team != team || !next.block.hasLiquids;
-            backCapped = blendbits == 0 && (prev == null || prev.team != team || !prev.block.hasLiquids);
+            capped = next == null || next.team != team || !(next.block instanceof CustomBlock customBlock && customBlock.hasCustomLiquid);
+            backCapped = blendbits == 0 && (prev == null || prev.team != team || !(prev.block instanceof CustomBlock customBlock && customBlock.hasCustomLiquid));
         }
 
         @Override

@@ -179,7 +179,7 @@ public class CustomBlock extends Block {
                 return 0.0F;
             } else {
                 next = next.getLiquidDestination(this, liquid);
-                if (next.team == this.team && next.block.hasLiquids && this.customLiquids.get(liquid) > 0.0F) {
+                if (next.team == this.team && ((CustomBlock) next.block).hasCustomLiquid && this.customLiquids.get(liquid) > 0.0F) {
                     float ofract = next.customLiquids.get(liquid) / ((CustomBlock) next.block).customLiquidCapacity;
                     float fract = this.customLiquids.get(liquid) / customLiquidCapacity * this.block.liquidPressure;
                     float flow = Math.min(Mathf.clamp(fract - ofract) * customLiquidCapacity, this.customLiquids.get(liquid));
