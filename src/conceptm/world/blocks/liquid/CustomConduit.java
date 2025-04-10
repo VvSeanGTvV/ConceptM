@@ -53,6 +53,8 @@ public class CustomConduit extends CustomLiquidBlock implements Autotiler {
         conveyorPlacement = true;
         noUpdateDisabled = true;
         canOverdrive = false;
+
+        hasLiquids = false;
         priority = TargetPriority.transport;
     }
 

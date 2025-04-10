@@ -2,11 +2,15 @@ package conceptm.world.type;
 
 import arc.Core;
 import arc.graphics.Color;
-import arc.math.Rand;
+import arc.graphics.g2d.*;
+import arc.math.*;
 import arc.struct.ObjectSet;
 import arc.util.*;
+import conceptm.generator.PuddleCustom;
 import mindustry.content.*;
 import mindustry.entities.Effect;
+import mindustry.gen.Puddle;
+import mindustry.graphics.Drawf;
 import mindustry.type.*;
 import mindustry.world.meta.*;
 
@@ -14,6 +18,7 @@ import java.util.*;
 
 import static conceptm.graphics.BlendColor.blendColorsVibrant;
 import static conceptm.world.type.CustomItem.nameRegistry;
+import static mindustry.entities.Puddles.maxLiquid;
 import static mindustry.type.Liquid.*;
 
 public class CustomLiquid extends CustomUnlockable {
@@ -64,7 +69,7 @@ public class CustomLiquid extends CustomUnlockable {
     /** Effect when this liquid vaporizes. */
     public Effect vaporEffect = Fx.vapor;
     /** Liquids this puddle can stay on, e.g. oil on water. */
-    public ObjectSet<Liquid> canStayOn = new ObjectSet<>();
+    public ObjectSet<CustomLiquid> canStayOn = new ObjectSet<>();
 
     public CustomLiquid(String name, Object a0, Object b0){
 
@@ -137,6 +142,37 @@ public class CustomLiquid extends CustomUnlockable {
                 item1,
                 item2
         );
+    }
+
+    public boolean willBoil(){
+        return Attribute.heat.env() >= boilPoint;
+    }
+
+    public void drawPuddle(PuddleCustom puddle){
+        float amount = puddle.amount, x = puddle.x, y = puddle.y;
+        float f = Mathf.clamp(amount / (maxLiquid / 1.5f));
+        float smag = puddle.tile.floor().isLiquid ? 0.8f : 0f, sscl = 25f;
+
+        Draw.color(Tmp.c1.set(color).shiftValue(-0.05f));
+        Fill.circle(x + Mathf.sin(Time.time + id * 532, sscl, smag), y + Mathf.sin(Time.time + id * 53, sscl, smag), f * 8f);
+
+        float length = f * 6f;
+        rand.setSeed(id);
+        for(int i = 0; i < 3; i++){
+            Tmp.v1.trns(rand.random(360f), rand.random(length));
+            float vx = x + Tmp.v1.x, vy = y + Tmp.v1.y;
+
+            Fill.circle(
+                    vx + Mathf.sin(Time.time + i * 532, sscl, smag),
+                    vy + Mathf.sin(Time.time + i * 53, sscl, smag),
+                    f * 5f);
+        }
+
+        Draw.color();
+
+        if(lightColor.a > 0.001f && f > 0){
+            Drawf.light(x, y, 30f * f, lightColor, color.a * f * 0.8f);
+        }
     }
 
     public int getAnimationFrame(){

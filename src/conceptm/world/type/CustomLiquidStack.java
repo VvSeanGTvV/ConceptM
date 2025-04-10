@@ -14,4 +14,9 @@ public class CustomLiquidStack {
         this.amount = amount;
         return this;
     }
+
+    public CustomLiquidStack set(float amount){
+        this.amount = amount;
+        return this;
+    }
 }

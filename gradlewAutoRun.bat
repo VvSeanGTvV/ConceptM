@@ -3,7 +3,7 @@ set builded=0
 set copied=0
 
 set modsLocation=%APPDATA%\Mindustry\mods
-set mindustry=C:\Users\gombo\Downloads\Mindustry-BE-Desktop-25706.jar
+set mindustry=D:\user\Downloads\mindustry-windows-64-bit\Mindustry.exe
 @echo off
 
 

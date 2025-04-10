@@ -59,11 +59,7 @@ public class Mixer extends CustomLiquidBlock {
         public float warmup;
         public float totalProgress;
 
-        @Override
-        public boolean acceptLiquid(Building source, Liquid liquid) {
-            return this.block.hasLiquids;
-        }
-
+        boolean onceBar0 = false, onceBar1 = false;
         public Liquid select0, select1;
         public CustomLiquid output, select0c, select1c;
 
@@ -74,8 +70,8 @@ public class Mixer extends CustomLiquidBlock {
         }
 
         public float getCapacity(Object liquid){
-            return (liquid instanceof Liquid liq) ? liquidCapacity :
-                    (liquid instanceof CustomLiquid liq) ? customLiquidCapacity :
+            return (liquid instanceof Liquid) ? liquidCapacity :
+                    (liquid instanceof CustomLiquid) ? customLiquidCapacity :
                             0f;
         }
 
@@ -90,8 +86,8 @@ public class Mixer extends CustomLiquidBlock {
 
             Draw.rect(bottomRegion, x, y);
 
-            if (l0 != null) drawTiledFrames(size, x, y, 4f, l0, getAmount(l0) / getCapacity(l0));
-            if (l1 != null) drawTiledFrames(size, x, y, 4f, l1, getAmount(l1) / getCapacity(l1));
+            if (l0 != null) drawTiledFrames(size, x, y, 4f, l0, 0.5f * (getAmount(l0) / getCapacity(l0)));
+            if (l1 != null) drawTiledFrames(size, x, y, 4f, l1, 0.5f * (getAmount(l1) / getCapacity(l1)));
 
             Drawf.spinSprite(rotorRegion, x, y, totalProgress * 1f);
             Draw.rect(region, x, y);
@@ -99,6 +95,16 @@ public class Mixer extends CustomLiquidBlock {
             if (output != null && customLiquids.get(output) > 0.001f) drawTiledFrames(2, x, y, 6f, output, getAmount(output) / getCapacity(output));
 
             Draw.rect(topRegion, x, y);
+        }
+
+        @Override
+        public boolean acceptLiquid(Building source, Liquid liquid) {
+            return this.block.hasLiquids;
+        }
+
+        @Override
+        public boolean acceptCustomLiquid(Building source, CustomLiquid liquid) {
+            return output == null || !Objects.equals(liquid.name, output.name);
         }
 
         @Override
@@ -154,11 +160,11 @@ public class Mixer extends CustomLiquidBlock {
 
         @Override
         public void updateTile() {
-            float min = 1f;
+            float min = 0.1f;
 
 
             if (output != null && hasOutputs(output)) dumpLiquid(output);
-            boolean valid = (select0 != null && select1 != null && (liquids.get(select0) > min) && (liquids.get(select0) >= min)) ||
+            boolean valid = (select0 != null && select1 != null && (liquids.get(select0) > min) && (liquids.get(select1) >= min)) ||
                     (select0c != null && select1 != null && (customLiquids.get(select0c) > min)  && (liquids.get(select1) >= min) ) ||
                     (select0 != null && select1c != null && (customLiquids.get(select1c) > min)  && (liquids.get(select0) >= min) ) ||
                     (select0c != null && select1c != null && (customLiquids.get(select0c) > min)  && (customLiquids.get(select1c) >= min) );
@@ -169,7 +175,30 @@ public class Mixer extends CustomLiquidBlock {
                 warmup = Mathf.approachDelta(warmup, 0f, 0.02f);
             }
 
-            //TODO may look bad, revert to edelta() if so
+            /*if (!onceBar0) {
+                if (select0 != null && (liquids.get(select0) > min)) {
+                    addDynamicLiquidBar((MixerBuild build) -> build.select0, select0.name);
+                    onceBar0 = true;
+                }
+
+                if (select0c != null && (customLiquids.get(select0c) > min)) {
+                    addDynamicCustomLiquidBar((MixerBuild build) -> build.select0c, select0c.name);
+                    onceBar0 = true;
+                }
+            }
+
+            if (!onceBar1) {
+                if (select1 != null  && (liquids.get(select1) > min)) {
+                    addDynamicLiquidBar((MixerBuild build) -> build.select1, select1.name);
+                    onceBar1 = true;
+                }
+
+                if (select1c != null && (customLiquids.get(select1c) > min)) {
+                    addDynamicCustomLiquidBar((MixerBuild build) -> build.select1c, select1c.name);
+                    onceBar1 = true;
+                }
+            }*/
+            
             totalProgress += warmup * edelta();
             
             if (liquids != null) {
@@ -177,11 +206,6 @@ public class Mixer extends CustomLiquidBlock {
                     if (select0 == null && (liquids.get(liq) > min) && select0c == null && liq != select1) select0 = liq;
                     if (select1 == null && (liquids.get(liq) > min) && select1c == null && liq != select0) select1 = liq;
                 }
-
-                if ((select0 != null && !(liquids.get(select0) > min))) select0 = null;
-                if ((select1 != null && !(liquids.get(select1) > min))) select1 = null;
-            } else {
-                select0 = select1 = null;
             }
 
             if (customLiquids.any() && customLiquids != null) {
@@ -189,11 +213,6 @@ public class Mixer extends CustomLiquidBlock {
                     if (select0c == null && (customLiquids.get(itemc.liq) >= min) && select0 == null && (select1c == null || !Objects.equals(itemc.liq.name, select1c.name))) select0c = itemc.liq;
                     if (select1c == null && (customLiquids.get(itemc.liq) >= min) && select1 == null && (select0c == null || !Objects.equals(itemc.liq.name, select0c.name))) select1c = itemc.liq;
                 }
-
-                if (select0c != null && !(customLiquids.get(select0c) >= min)) select0c = null;
-                if (select1c != null && !(customLiquids.get(select1c) >= min)) select1c = null;
-            } else {
-                select0c = select1c = null;
             }
 
             if (valid) combine(min);
