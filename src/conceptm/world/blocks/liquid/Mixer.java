@@ -90,7 +90,7 @@ public class Mixer extends CustomLiquidBlock {
             if (l0 != null) drawTiledFrames(size, x, y, 4f, l0, 0.5f * (getAmount(l0) / getCapacity(l0)));
             if (l1 != null) drawTiledFrames(size, x, y, 4f, l1, 0.5f * (getAmount(l1) / getCapacity(l1)));
 
-            Drawf.spinSprite(rotorRegion, x, y, totalProgress * 1f);
+            Drawf.spinSprite(rotorRegion, x, y, totalProgress * 2f);
             Draw.rect(region, x, y);
 
             if (output != null && customLiquids.get(output) > 0.001f) drawTiledFrames(2, x, y, 6f, output, getAmount(output) / getCapacity(output));
@@ -170,7 +170,7 @@ public class Mixer extends CustomLiquidBlock {
                     (select0 != null && select1c != null && (customLiquids.get(select1c) > min)  && (liquids.get(select0) >= min) ) ||
                     (select0c != null && select1c != null && (customLiquids.get(select0c) > min)  && (customLiquids.get(select1c) >= min) );
 
-            if (valid && output != null && (customLiquids.get(output) < customLiquidCapacity)){
+            if (output != null && (customLiquids.get(output) < customLiquidCapacity)){
                 warmup = Mathf.lerpDelta(warmup, 1f, 0.02f);
             } else {
                 warmup = Mathf.approachDelta(warmup, 0f, 0.02f);

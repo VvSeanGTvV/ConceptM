@@ -30,7 +30,8 @@ public class ConceptBlocks {
         }};
 
         Mixer = new Mixer("mixer"){{
-            customLiquidCapacity = 10;
+
+            customLiquidCapacity = liquidCapacity = 50;
             requirements(Category.distribution, with(Items.copper, 1));
             size = 3;
         }};
