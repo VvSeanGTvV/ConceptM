@@ -20,7 +20,7 @@ public class CustomLiquidRouter extends CustomLiquidBlock{
         public void draw(){
             Draw.rect(bottomRegion, x, y);
 
-            if(liquids.currentAmount() > 0.001f){
+            if(customLiquids.currentAmount() > 0.001f){
                 drawTiledFrames(size, x, y, liquidPadding, customLiquids.current(), customLiquids.currentAmount() / customLiquidCapacity);
             }
 
