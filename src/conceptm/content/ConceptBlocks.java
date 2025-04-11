@@ -20,7 +20,7 @@ import static mindustry.type.ItemStack.with;
 public class ConceptBlocks {
     public static Block
 
-    Combine, ComboConveyor, ComboGen, Mixer, ComboConduit;
+    Combine, ComboConveyor, ComboGen, Mixer, ComboConduit, ComboLiquidTank;
 
     public static void load(){
         Combine = new Combiner("compressor"){{
@@ -32,6 +32,13 @@ public class ConceptBlocks {
         Mixer = new Mixer("mixer"){{
 
             customLiquidCapacity = liquidCapacity = 50;
+            requirements(Category.distribution, with(Items.copper, 1));
+            size = 3;
+        }};
+
+        ComboLiquidTank = new CustomLiquidRouter("liquid-tank"){{
+
+            customLiquidCapacity = liquidCapacity = 2700f;
             requirements(Category.distribution, with(Items.copper, 1));
             size = 3;
         }};

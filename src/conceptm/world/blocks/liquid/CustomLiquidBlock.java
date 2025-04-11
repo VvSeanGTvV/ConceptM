@@ -22,7 +22,12 @@ public class CustomLiquidBlock extends CustomBlock {
 
         update = true;
         solid = true;
-        hasCustomLiquid = hasLiquids = true;
+
+        hasCustomLiquid = true;
+        hasLiquids = false;
+
+
+        hasCustomItem = hasItems = false;
         group = BlockGroup.liquids;
         outputsLiquid = true;
         envEnabled |= Env.space | Env.underwater;
