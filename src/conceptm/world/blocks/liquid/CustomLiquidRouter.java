@@ -29,7 +29,7 @@ public class CustomLiquidRouter extends CustomLiquidBlock{
 
         @Override
         public boolean acceptCustomLiquid(Building source, CustomLiquid liquid) {
-            return (customLiquids.current() == liquid || customLiquids.currentAmount() < 0.2f);
+            return (Objects.equals(liquid.name, customLiquuds.current().name) || customLiquids.currentAmount() < 0.2f);
         }
     }
 }
