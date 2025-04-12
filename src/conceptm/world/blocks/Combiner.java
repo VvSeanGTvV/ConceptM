@@ -137,7 +137,7 @@ public class Combiner extends CustomBlock {
                     (select0 != null && select1c != null && customItems.has(select1c) && items.has(select0)) ||
                     (select0c != null && select1c != null && customItems.has(select1c) && customItems.has(select0c));
 
-            efficiency(valid && check() ? 1f : 0f);
+            efficiency = (valid && check() ? 1f : 0f);
 
             if (efficiency > 0){
                 progress += getProgressIncrease(craftTime);

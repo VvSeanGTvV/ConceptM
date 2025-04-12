@@ -34,6 +34,7 @@ public class Mixer extends CustomLiquidBlock {
         update = true;
         solid = true;
 
+        outputsLiquid = false;
         group = BlockGroup.liquids;
         configurable = true;
         envEnabled |= Env.space | Env.underwater;
@@ -84,6 +85,9 @@ public class Mixer extends CustomLiquidBlock {
 
             Object l1 = (select1 != null && liquids.get(select1) > 0.001f) ? select1 :
                     (select1c != null && customLiquids.get(select1c) > 0.001f) ? select1c : null;
+
+            float speed = (select0 != null && liquids.get(select0) > 0.001f) ? select0.viscosity :
+                    (select0c != null && customLiquids.get(select0c) > 0.001f) ? select0c.viscosity : 1f;
 
             Draw.rect(bottomRegion, x, y);
 

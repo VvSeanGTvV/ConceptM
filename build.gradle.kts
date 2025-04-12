@@ -82,6 +82,9 @@ allprojects{
         // Use Zelaux's non-buggy repository for release Mindustry and Arc builds.
         if(!useJitpack) maven("https://raw.githubusercontent.com/Zelaux/MindustryRepo/master/repository")
         maven("https://jitpack.io")
+
+        // Use XPDustry's non-buggy also, jitpack cringe for v147
+        maven("https://maven.xpdustry.com/mindustry")
     }
 
     tasks.withType<JavaCompile>().configureEach{
@@ -98,7 +101,7 @@ allprojects{
 }
 
 project(":"){
-    apply(plugin = "com.github.GglLfr.EntityAnno")
+    /*apply(plugin = "com.github.GglLfr.EntityAnno")
     configure<EntityAnnoExtension>{
         modName = project.properties["modName"].toString()
         mindustryVersion = project.properties[if(useJitpack) "mindustryBEVersion" else "mindustryVersion"].toString()
@@ -107,12 +110,12 @@ project(":"){
         fetchPackage = modFetch
         genSrcPackage = modGenSrc
         genPackage = modGen
-    }
+    }*/
 
     dependencies{
         // Use the entity generation annotation processor.
-        compileOnly(entity(":entity"))
-        add("kapt", entity(":entity"))
+        //compileOnly(entity(":entity"))
+        //add("kapt", entity(":entity"))
 
         compileOnly(mindustry(":core"))
         compileOnly(arc(":arc-core"))

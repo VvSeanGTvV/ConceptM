@@ -40,6 +40,7 @@ public class CustomItem extends CustomUnlockable {
 
     public Item item1, item2;
     public CustomItem item1c, item2c;
+    public CustomLiquid liqc;
     public CustomItem(String name, Object a0, Object b0){
         var aHard = (a0 instanceof Item item) ? item.hardness : (a0 instanceof CustomItem comboItem) ? comboItem.hardness : 0;
         var bHard = (b0 instanceof Item item) ? item.hardness : (b0 instanceof CustomItem comboItem) ? comboItem.hardness : 0;

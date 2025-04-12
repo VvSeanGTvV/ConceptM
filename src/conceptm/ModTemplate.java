@@ -3,11 +3,11 @@ package conceptm;
 import conceptm.content.ConceptBlocks;
 import conceptm.core.exUI;
 import mindustry.mod.*;
-import conceptm.gen.*;
+//import conceptm.gen.*;
 
 import static mindustry.Vars.*;
 
-public class ModTemplate extends Mod{
+public class ModTemplate extends Mod {
 
     public static String internalMod = "concept-m";
     public static Mods.LoadedMod mod;
@@ -24,7 +24,7 @@ public class ModTemplate extends Mod{
 
     @Override
     public void loadContent(){
-        EntityRegistry.register();
+        //EntityRegistry.register();
         ConceptBlocks.load();
     }
 }
