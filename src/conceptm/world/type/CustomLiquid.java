@@ -26,6 +26,9 @@ public class CustomLiquid extends CustomUnlockable {
     public Liquid liq1, liq2;
     public CustomLiquid liq1c, liq2c;
 
+    public Item item0;
+    public CustomItem item0c;
+
     protected static final Rand rand = new Rand();
 
     /** If true, this fluid is treated as a gas (and does not create puddles) */
@@ -88,12 +91,14 @@ public class CustomLiquid extends CustomUnlockable {
 
         // Combine numeric properties (average them)
         float div = 1.5f;
-        this.temperature = (atemp + btemp);
+        this.temperature = (atemp + btemp) / div;
         this.heatCapacity = (aheat + bheat) / div;
         this.flammability = (aflame + bflame) / div;
         this.explosiveness = (aexplode + bexplode) / div;
         this.boilPoint = (aboil + bboil);
-        this.viscosity = (avis + bvis);
+
+        // PREVENT PUDDLE LOOP
+        this.viscosity = Math.min(((avis + bvis) / div), 1f);
 
         liq1 = (a0 instanceof Liquid item) ? item : null;
         liq2 = (b0 instanceof Liquid item) ? item : null;
@@ -134,6 +139,85 @@ public class CustomLiquid extends CustomUnlockable {
         short i0d = (liq1 != null) ? liq1.id : (liq1c != null) ? liq1c.id : (short) 0;
         short i1d = (liq2 != null) ? liq2.id : (liq2c != null) ? liq2c.id : (short) 0;
         this.id = (short) (i0d + i1d);
+    }
+
+    public CustomLiquid(Object item){
+        float charge = (item instanceof Item item1) ? item1.charge : (item instanceof CustomItem item1c) ? item1c.charge : 0f;
+        float cost = (item instanceof Item item1) ? item1.cost : (item instanceof CustomItem item1c) ? item1c.cost : 1f;
+        float flammability = (item instanceof Item item1) ? item1.flammability : (item instanceof CustomItem item1c) ? item1c.flammability : 0f;
+        float explosiveness = (item instanceof Item item1) ? item1.explosiveness : (item instanceof CustomItem item1c) ? item1c.explosiveness : 0f;
+        float radioactivity = (item instanceof Item item1) ? item1.radioactivity : (item instanceof CustomItem item1c) ? item1c.radioactivity : 0f;
+        int hardness = (item instanceof Item item1) ? item1.hardness : (item instanceof CustomItem item1c) ? item1c.hardness : 0;
+
+        Color color1 = (item instanceof Item item1) ? item1.color : (item instanceof CustomItem item1c) ? item1c.color : Color.white.cpy();
+
+        this.temperature = 0.9f + (charge * 0.1f);
+        this.heatCapacity = Math.min(1f, 0.3f + cost * 0.1f);
+        this.flammability = flammability * 0.8f;
+        this.explosiveness = explosiveness * 1.2f;
+        float boilPoint1 = (this.temperature + (hardness * 0.03f) - (charge * 0.2f));
+        this.boilPoint = boilPoint1;
+
+        // PREVENT PUDDLE LOOP
+        this.viscosity = 1f - (hardness / 10f);
+
+        // ADJUSTABLE
+        if (temperature >= boilPoint) {
+            this.explosiveness += 0.2f; // or scale it by (temperature - boilPoint)
+        }
+
+        // COLOR ADJUSTER
+        Color liquidColor = color1.cpy(); // start with base color
+
+        /*if(charge > 0.5f){
+            liquidColor.lerp(Color.blue, (charge - 0.5f) * 2f); // add blue if highly charged
+        }
+
+        if(radioactivity > 0.3f){
+            liquidColor.lerp(Color.green, (radioactivity)); // add green tint if radioactive
+        }
+
+        if(temperature >= 0.8f){
+            liquidColor.lerp(Color.orange, (temperature - 0.8f) * 5f); // molten glow
+        }
+
+        if (temperature >= boilPoint) {
+            liquidColor.lerp(Color.white, (temperature - boilPoint) * 2f);
+        }*/
+
+        if(temperature >= boilPoint){
+            gas = true;
+            viscosity = 0.1f;
+            heatCapacity *= 0.5f;
+            this.explosiveness += 0.2f;
+            this.flammability += 0.1f;
+            liquidColor.a = 0.4f; // semi-transparent
+        }
+
+        if(gas && temperature < boilPoint){
+            gas = false;
+            this.temperature = 0.9f + (charge * 0.1f);
+            this.heatCapacity = Math.min(1f, 0.3f + cost * 0.1f);
+            this.flammability = flammability * 0.8f;
+            this.explosiveness = explosiveness * 1.2f;
+            this.boilPoint = boilPoint1;
+        }
+
+        String localizedName = (item instanceof Item item1) ? item1.localizedName : (item instanceof CustomItem item1c) ? item1c.localizedName : "unknown";
+        String name = (item instanceof Item item1) ? item1.name : (item instanceof CustomItem item1c) ? item1c.name : "unknown";
+        short id = (item instanceof Item item1) ? item1.id : (item instanceof CustomItem item1c) ? item1c.id : 0;
+
+        if (item instanceof Item item1) item0 = item1;
+        if (item instanceof CustomItem item1) item0c = item1;
+
+        this.color = this.barColor = liquidColor;
+        this.localizedName = localizedName + " Liquid";
+        this.name = "liquid-" + name;
+        fullIcon = (gas) ? Core.atlas.find("concept-m" + "-gas-template") : Core.atlas.find("concept-m" + "-liquid-template");
+        //createIcons(liq1, liq2, liq1c, liq2c);
+        setStats();
+
+        this.id = (short) (id + 10);
     }
 
     public CustomLiquid(Object item1, Object item2) {

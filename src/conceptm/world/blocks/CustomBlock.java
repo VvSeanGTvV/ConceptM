@@ -245,10 +245,13 @@ public class CustomBlock extends Block {
         }
 
         public void consumeObject(Object item0, Object item1, int amount){
+            consumeObject(item0, amount);
+            consumeObject(item1, amount);
+        }
+
+        public void consumeObject(Object item0, int amount){
             if (item0 instanceof Item item) items.remove(item, amount);
-            if (item1 instanceof Item item) items.remove(item, amount);
             if (item0 instanceof CustomItem item) customItems.remove(item, amount);
-            if (item1 instanceof CustomItem item) customItems.remove(item, amount);
         }
 
         public void consumeObject(Object item0, Object item1, float amount){
@@ -256,6 +259,10 @@ public class CustomBlock extends Block {
             if (item1 instanceof Liquid item) liquids.remove(item, amount);
             if (item0 instanceof CustomLiquid item) customLiquids.remove(item, amount);
             if (item1 instanceof CustomLiquid item) customLiquids.remove(item, amount);
+        }
+
+        public void consumeObject(Object item0){
+            consumeObject(item0, 1);
         }
 
         public void consumeObject(Object item0, Object item1){

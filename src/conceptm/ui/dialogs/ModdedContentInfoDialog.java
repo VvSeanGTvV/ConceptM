@@ -1,6 +1,7 @@
 package conceptm.ui.dialogs;
 
 import arc.Core;
+import arc.graphics.Color;
 import arc.scene.ui.ScrollPane;
 import arc.scene.ui.layout.Table;
 import arc.struct.OrderedMap;
@@ -8,7 +9,7 @@ import arc.struct.Seq;
 import arc.util.Scaling;
 import conceptm.world.type.*;
 import mindustry.Vars;
-import mindustry.gen.Icon;
+import mindustry.gen.*;
 import mindustry.graphics.Pal;
 import mindustry.input.Binding;
 import mindustry.ui.dialogs.BaseDialog;
@@ -127,31 +128,46 @@ public class ModdedContentInfoDialog extends BaseDialog {
 
         table.row();
 
-        table.table(a -> {
-            if (Liquid.liq1 != null) {
-                a.image(Liquid.liq1.fullIcon).pad(4f);
-                a.button("?", Styles.flatBordert, () -> Vars.ui.content.show(Liquid.liq1)).size(40f).pad(10).right().grow();
-            }
-            else if (Liquid.liq1c != null) {
-                a.image(Liquid.liq1c.fullIcon).color(Liquid.liq1c.color).pad(4f);
-                a.button("?", Styles.flatBordert, () -> ui.content.showLiquid(Liquid.liq1c)).size(40f).pad(10).right().grow();
-            }
-            else a.add("?").pad(4f);
+        if (Liquid.item0 != null || Liquid.item0c != null) {
+            int hardness = Liquid.item0 != null ? Liquid.item0.hardness : Liquid.item0c.hardness;
+            table.table(a -> {
+                if (Liquid.item0 != null) {
+                    a.image(Liquid.item0.fullIcon).pad(4f);
+                    a.button("?", Styles.flatBordert, () -> Vars.ui.content.show(Liquid.item0)).size(40f).pad(10).right().grow();
+                } else if (Liquid.item0c != null) {
+                    a.image(Liquid.item0c.fullIcon).color(Liquid.item0c.color).pad(4f);
+                    a.button("?", Styles.flatBordert, () -> ui.content.showItem(Liquid.item0c)).size(40f).pad(10).right().grow();
+                } else a.add("?").pad(4f);
 
-            a.add("+").pad(4f);
-            if (Liquid.liq2 != null) {
-                a.image(Liquid.liq2.fullIcon).pad(4f);
-                a.button("?", Styles.flatBordert, () -> Vars.ui.content.show(Liquid.liq2)).size(40f).pad(10).right().grow();
-            }
-            else if (Liquid.liq2c != null) {
-                a.image(Liquid.liq2c.fullIcon).color(Liquid.liq2c.color).pad(4f);
-                a.button("?", Styles.flatBordert, () -> ui.content.showLiquid(Liquid.liq2c)).size(40f).pad(10).right().grow();
-            }
-            else a.add("?").pad(4f);
+                a.add("+").pad(4f);
+                a.add("[red]" + Iconc.waves + "[] " + Math.floor(0.4f + hardness * 0.05f) + Core.bundle.get("unit.heatunits")).pad(4f);
 
-            a.image(Icon.rightSmall).pad(4f);
-            a.image(Liquid.fullIcon).color(Liquid.color).pad(4f);
-        });
+                a.image(Icon.rightSmall).pad(4f);
+                a.image(Liquid.fullIcon).color(Liquid.color).pad(4f);
+            });
+        } else {
+            table.table(a -> {
+                if (Liquid.liq1 != null) {
+                    a.image(Liquid.liq1.fullIcon).pad(4f);
+                    a.button("?", Styles.flatBordert, () -> Vars.ui.content.show(Liquid.liq1)).size(40f).pad(10).right().grow();
+                } else if (Liquid.liq1c != null) {
+                    a.image(Liquid.liq1c.fullIcon).color(Liquid.liq1c.color).pad(4f);
+                    a.button("?", Styles.flatBordert, () -> ui.content.showLiquid(Liquid.liq1c)).size(40f).pad(10).right().grow();
+                } else a.add("?").pad(4f);
+
+                a.add("+").pad(4f);
+                if (Liquid.liq2 != null) {
+                    a.image(Liquid.liq2.fullIcon).pad(4f);
+                    a.button("?", Styles.flatBordert, () -> Vars.ui.content.show(Liquid.liq2)).size(40f).pad(10).right().grow();
+                } else if (Liquid.liq2c != null) {
+                    a.image(Liquid.liq2c.fullIcon).color(Liquid.liq2c.color).pad(4f);
+                    a.button("?", Styles.flatBordert, () -> ui.content.showLiquid(Liquid.liq2c)).size(40f).pad(10).right().grow();
+                } else a.add("?").pad(4f);
+
+                a.image(Icon.rightSmall).pad(4f);
+                a.image(Liquid.fullIcon).color(Liquid.color).pad(4f);
+            });
+        }
         addStats(table, Liquid.stats);
 
         ScrollPane pane = new ScrollPane(table);

@@ -20,35 +20,43 @@ import static mindustry.type.ItemStack.with;
 public class ConceptBlocks {
     public static Block
 
-    Combine, ComboConveyor, ComboGen, Mixer, ComboConduit, ComboLiquidTank;
+    combine, comboConveyor, comboGen, mixer, comboConduit, comboLiquidTank, crucible;
 
     public static void load(){
-        Combine = new Combiner("compressor"){{
+        combine = new Combiner("compressor"){{
             customItemCapacity = 10;
             requirements(Category.distribution, with(Items.copper, 1));
             size = 3;
         }};
 
-        Mixer = new Mixer("mixer"){{
+        crucible = new Crucible("crucible"){{
+            requirements(Category.crafting, with(Items.lead, 55, Items.titanium, 30));
+            itemCapacity = customItemCapacity = 50;
+            customLiquidCapacity = 50f;
+
+            size = 3;
+        }};
+
+        mixer = new Mixer("mixer"){{
 
             customLiquidCapacity = liquidCapacity = 50;
             requirements(Category.distribution, with(Items.copper, 1));
             size = 3;
         }};
 
-        ComboLiquidTank = new CustomLiquidRouter("liquid-tank"){{
+        comboLiquidTank = new CustomLiquidRouter("liquid-tank"){{
 
             customLiquidCapacity = liquidCapacity = 2700f;
             requirements(Category.distribution, with(Items.copper, 1));
             size = 3;
         }};
 
-        ComboConduit = new CustomConduit("test-conduit"){{
+        comboConduit = new CustomConduit("test-conduit"){{
             requirements(Category.distribution, with(Items.copper, 1));
             size = 1;
         }};
 
-        ComboGen = new ConsumeCustomGenerator("combustion-gen"){{
+        comboGen = new ConsumeCustomGenerator("combustion-gen"){{
             requirements(Category.distribution, with(Items.copper, 1));
 
             powerProduction = 1.25f;
@@ -61,7 +69,7 @@ public class ConceptBlocks {
             size = 1;
         }};
 
-        ComboConveyor = new CustomConveyor("shape-conveyor"){{
+        comboConveyor = new CustomConveyor("shape-conveyor"){{
             requirements(Category.distribution, with(Items.copper, 1));
             size = 1;
 

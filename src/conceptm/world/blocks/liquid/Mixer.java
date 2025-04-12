@@ -165,14 +165,16 @@ public class Mixer extends CustomLiquidBlock {
 
         @Override
         public void updateTile() {
-            float min = 0.1f;
+            float min = 0.001f;
 
 
             if (output != null && hasOutputs(output)) dumpLiquid(output);
             boolean valid = (select0 != null && select1 != null && (liquids.get(select0) > min) && (liquids.get(select1) >= min)) ||
                     (select0c != null && select1 != null && (customLiquids.get(select0c) > min)  && (liquids.get(select1) >= min) ) ||
                     (select0 != null && select1c != null && (customLiquids.get(select1c) > min)  && (liquids.get(select0) >= min) ) ||
-                    (select0c != null && select1c != null && (customLiquids.get(select0c) > min)  && (customLiquids.get(select1c) >= min) );
+                    (select0c != null && select1c != null && (customLiquids.get(select0c) > min)  && (customLiquids.get(select1c) >= min));
+
+            efficiency = (valid ? 1f : 0f);
 
             if (output != null && (customLiquids.get(output) < customLiquidCapacity)){
                 warmup = Mathf.lerpDelta(warmup, 1f, 0.02f);
