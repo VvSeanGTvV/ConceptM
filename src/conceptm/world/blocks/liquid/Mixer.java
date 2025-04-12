@@ -165,7 +165,7 @@ public class Mixer extends CustomLiquidBlock {
 
         @Override
         public void updateTile() {
-            float min = 0.001f;
+            float min = 0.1f;
 
 
             if (output != null && hasOutputs(output)) dumpLiquid(output);
