@@ -5,8 +5,11 @@ import arc.graphics.g2d.*;
 import arc.math.Mathf;
 import arc.scene.ui.layout.Table;
 import arc.util.Time;
+import arc.util.io.*;
 import conceptm.world.type.CustomItem;
 import conceptm.world.type.CustomItemStack;
+import mindustry.Vars;
+import mindustry.content.Fx;
 import mindustry.gen.*;
 import mindustry.type.Item;
 import mindustry.ui.Styles;
@@ -151,6 +154,7 @@ public class Combiner extends CustomBlock {
 
             if(progress >= 1f){
                 combine();
+                for (int i=0; i<10; i++) if (Mathf.chanceDelta(0.05000000298023224)) Fx.smeltsmoke.at(x, y);
             }
 
             if (items.any() && items != null) {
@@ -231,6 +235,80 @@ public class Combiner extends CustomBlock {
             Draw.xscl = 1f;
 
             Draw.rect(region, x, y);
+        }
+
+        @Override
+        public void write(Writes write) {
+            /*write.str((select0 != null) ? select0.name : "unknown");
+            write.i(items.get(select0));
+            write.str((select0c != null) ? select0c.name : "unknown");
+            write.i(customItems.get(select0c));
+            write.str((select1 != null) ? select1.name : "unknown");
+            write.i(items.get(select1));
+            write.str((select1c != null) ? select1c.name : "unknown");
+            write.i(customItems.get(select1c));*/
+            super.write(write);
+        }
+
+        public Object parseSide(String side){
+            if(side.startsWith("{")){
+                return decodeAndCreateCustomItem(side); // recursively decode
+            }
+
+            // Try core item
+            Item coreItem = content.items().find(i -> i.name.equals(side));
+            if(coreItem != null) return coreItem;
+
+            return null; // or customItem lookup if needed
+        }
+
+        public CustomItem decodeAndCreateCustomItem(String input){
+            if(input == null || input.isEmpty()) return null;
+
+            // Strip outer braces
+            if(input.startsWith("{") && input.endsWith("}")){
+                input = input.substring(1, input.length() - 1);
+            }
+
+            int depth = 0;
+            for(int i = 0; i < input.length(); i++){
+                char c = input.charAt(i);
+                if(c == '{') depth++;
+                else if(c == '}') depth--;
+                else if(c == '+' && depth == 0){
+                    String left = input.substring(0, i);
+                    String right = input.substring(i + 1);
+
+                    Object a = parseSide(left.trim());
+                    Object b = parseSide(right.trim());
+
+                    if(a == null || b == null) return null;
+
+                    return new CustomItem(a, b);
+                }
+            }
+
+            return null; // if no + found at base level
+        }
+
+        @Override
+        public void read(Reads read, byte revision) {
+            super.read(read, revision);
+            /*String vanillaStr0 = read.str();
+            int total0 = read.i();
+            String vanillaStr0c = read.str();
+            int total0c = read.i();
+            String vanillaStr1 = read.str();
+            int total1 = read.i();
+            String vanillaStr1c = read.str();
+            int total1c = read.i();
+            select0 = (Objects.equals(vanillaStr0, "unknown")) ? null : content.item(vanillaStr0);
+            select0c = (Objects.equals(vanillaStr0c, "unknown")) ? null : decodeAndCreateCustomItem(vanillaStr0c);
+            select1 = (Objects.equals(vanillaStr1, "unknown")) ? null : content.item(vanillaStr1);
+            select1c = (Objects.equals(vanillaStr1c, "unknown")) ? null : decodeAndCreateCustomItem(vanillaStr1c);
+            if (select0c != null) customItems.add(select0c, total0c);
+            //if (select1 != null) items.add(select1, total1);
+            if (select1c != null) customItems.add(select1c, total1c);*/
         }
     }
 }

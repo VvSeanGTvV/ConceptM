@@ -232,7 +232,7 @@ public class Mixer extends CustomLiquidBlock {
                 if (Mathf.chanceDelta(0.1)) {
                     Fx.fire.at(x, y);
                 }
-                if (Mathf.chanceDelta(0.05000000298023224)) {
+                if (Mathf.chanceDelta(0.2000000298023224)) {
                     Fx.steam.at(x, y);
                 }
             }
