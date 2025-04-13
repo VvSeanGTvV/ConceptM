@@ -1,15 +1,17 @@
 package conceptm.world.blocks.liquid;
 
+import arc.graphics.Color;
 import arc.graphics.g2d.*;
 import arc.math.*;
 import arc.math.geom.Vec2;
 import arc.struct.Seq;
 import arc.util.*;
-import conceptm.world.blocks.CustomBlock;
 import conceptm.world.type.*;
 import mindustry.gen.Building;
 import mindustry.type.Item;
 import mindustry.world.blocks.heat.HeatConsumer;
+
+import java.util.Objects;
 
 public class Crucible extends CustomLiquidBlock {
 
@@ -47,12 +49,12 @@ public class Crucible extends CustomLiquidBlock {
 
                 totalProgress += warmup * Time.delta;
                 int hardness = (select != null) ? select.hardness : (selectc != null) ? selectc.hardness : 0;
-                float requirement =  (0.4f + hardness * 0.05f);
+                float requirement =  Mathf.floor((0.4f + hardness * 0.05f) * 100f);
 
                 if(heat >= requirement) {
                     if (output == null) output = new CustomLiquid(item);
                     if (customLiquids.get(output) < customLiquidCapacity) {
-                        handeCustomLiquid(this, output, ((output.gas) ? 1.5f : 0.85f) * (10 * (1f + hardness * 0.05f)));
+                        handleCustomLiquid(this, output, ((output.gas) ? 1.5f : 0.85f) * (1 * (1f + hardness * 0.05f)));
                     }
                 }
             }else{
@@ -96,7 +98,10 @@ public class Crucible extends CustomLiquidBlock {
         public void handeCustomItem(Building source, CustomItem item) {
             super.handeCustomItem(source, item);
             selectc = item;
-            itemDisplays.add(new itemDisplay(item.fullIcon, customItems.get(item), item.name));
+            itemDisplay itemDisplay = new itemDisplay(item.fullIcon, customItems.get(item), item.name);
+            itemDisplay.useColor = true;
+            itemDisplay.color = item.color;
+            itemDisplays.add(itemDisplay);
         }
 
         @Override
@@ -106,7 +111,7 @@ public class Crucible extends CustomLiquidBlock {
 
         @Override
         public boolean acceptCustomItem(Building source, CustomItem item) {
-            return ((selectc == null || item == selectc) && (customItems.get(item) < getMaximumAccepted(item))) && select == null;
+            return ((selectc == null || Objects.equals(item.name, selectc.name)) && (customItems.get(item) < getMaximumAccepted(item))) && select == null;
         }
 
         @Override
@@ -129,15 +134,20 @@ public class Crucible extends CustomLiquidBlock {
             Vec2 pos;
             String name;
 
+            public boolean useColor;
+            public Color color;
+
             public itemDisplay(TextureRegion textureRegion, int count, String name){
-                float spread = Mathf.clamp(count * 0.5f, 3f, 10f);
+                float spread = Mathf.clamp(count * 0.5f, 3f, 5f);
                 this.textureRegion = textureRegion;
                 this.pos = new Vec2(Mathf.range(spread), Mathf.range(spread));
                 this.name = name;
             }
 
             public void draw(float x, float y, float size){
+                Draw.color((color != null && useColor) ? color : Color.white);
                 Draw.rect(textureRegion, x + pos.x, y + pos.y, size, size);
+                Draw.color();
             }
         }
     }

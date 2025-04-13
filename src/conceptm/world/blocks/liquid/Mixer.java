@@ -59,7 +59,7 @@ public class Mixer extends CustomLiquidBlock {
 
     public class MixerBuild extends CustomLiquidBuild {
         public float warmup;
-        public float totalProgress;
+        public float totalProgress, progress;
 
         boolean onceBar0 = false, onceBar1 = false;
         public Liquid select0, select1;
@@ -160,23 +160,27 @@ public class Mixer extends CustomLiquidBlock {
                 output = newCombo;
             }
 
-            //progress %= 1f;
+            progress %= 1f;
         }
 
         @Override
         public void updateTile() {
-            float min = 0.1f;
-
-
+            float min = 1f;
             if (output != null && hasOutputs(output)) dumpLiquid(output);
-            boolean valid = (select0 != null && select1 != null && (liquids.get(select0) > min) && (liquids.get(select1) >= min)) ||
-                    (select0c != null && select1 != null && (customLiquids.get(select0c) > min)  && (liquids.get(select1) >= min) ) ||
-                    (select0 != null && select1c != null && (customLiquids.get(select1c) > min)  && (liquids.get(select0) >= min) ) ||
-                    (select0c != null && select1c != null && (customLiquids.get(select0c) > min)  && (customLiquids.get(select1c) >= min));
+            boolean valid = (select0 != null && select1 != null && (liquids.get(select0) >= min) && (liquids.get(select1) >= min)) ||
+                    (select0c != null && select1 != null && (customLiquids.get(select0c) >= min)  && (liquids.get(select1) >= min) ) ||
+                    (select0 != null && select1c != null && (customLiquids.get(select1c) >= min)  && (liquids.get(select0) >= min) ) ||
+                    (select0c != null && select1c != null && (customLiquids.get(select0c) >= min)  && (customLiquids.get(select1c) >= min));
+
+            boolean minvalid = (select0 != null && select1 != null && (liquids.get(select0) >= 0.001f) && (liquids.get(select1) >= 0.001f)) ||
+                    (select0c != null && select1 != null && (customLiquids.get(select0c) >= 0.001f)  && (liquids.get(select1) >= 0.001f) ) ||
+                    (select0 != null && select1c != null && (customLiquids.get(select1c) >= 0.001f)  && (liquids.get(select0) >= 0.001f) ) ||
+                    (select0c != null && select1c != null && (customLiquids.get(select0c) >= 0.001f)  && (customLiquids.get(select1c) >= 0.001f));
 
             efficiency = (valid ? 1f : 0f);
 
-            if (output != null && (customLiquids.get(output) < customLiquidCapacity)){
+            progress += getProgressIncrease(30f);
+            if (minvalid && (output == null || customLiquids.get(output) < customLiquidCapacity)){
                 warmup = Mathf.lerpDelta(warmup, 1f, 0.02f);
             } else {
                 warmup = Mathf.approachDelta(warmup, 0f, 0.02f);
@@ -201,7 +205,7 @@ public class Mixer extends CustomLiquidBlock {
 
             if (valid) {
                 reactLiquid(min);
-                combine(min);
+                if (progress >= 1f) combine(min);
             }
         }
 
@@ -227,6 +231,9 @@ public class Mixer extends CustomLiquidBlock {
             } else {
                 if (Mathf.chanceDelta(0.1)) {
                     Fx.fire.at(x, y);
+                }
+                if (Mathf.chanceDelta(0.05000000298023224)) {
+                    Fx.steam.at(x, y);
                 }
             }
         }

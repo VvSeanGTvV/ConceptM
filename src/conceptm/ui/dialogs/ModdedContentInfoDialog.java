@@ -2,6 +2,7 @@ package conceptm.ui.dialogs;
 
 import arc.Core;
 import arc.graphics.Color;
+import arc.math.Mathf;
 import arc.scene.ui.ScrollPane;
 import arc.scene.ui.layout.Table;
 import arc.struct.OrderedMap;
@@ -140,7 +141,7 @@ public class ModdedContentInfoDialog extends BaseDialog {
                 } else a.add("?").pad(4f);
 
                 a.add("+").pad(4f);
-                a.add("[red]" + Iconc.waves + "[] " + Math.floor(0.4f + hardness * 0.05f) + Core.bundle.get("unit.heatunits")).pad(4f);
+                a.add("[red]" + Iconc.waves + "[] " + Mathf.floor((0.4f + hardness * 0.05f) * 100f) + " " + Core.bundle.get("unit.heatunits")).pad(4f);
 
                 a.image(Icon.rightSmall).pad(4f);
                 a.image(Liquid.fullIcon).color(Liquid.color).pad(4f);

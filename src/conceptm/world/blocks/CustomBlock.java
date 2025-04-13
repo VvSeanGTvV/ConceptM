@@ -5,12 +5,9 @@ import arc.func.Func;
 import arc.graphics.Color;
 import arc.math.Mathf;
 import arc.util.*;
-import conceptm.entities.PuddlesCustom;
 import conceptm.world.modules.*;
 import conceptm.world.type.*;
-import mindustry.Vars;
 import mindustry.content.Fx;
-import mindustry.entities.Puddles;
 import mindustry.game.Team;
 import mindustry.gen.Building;
 import mindustry.graphics.Pal;
@@ -185,7 +182,7 @@ public class CustomBlock extends Block {
                     float flow = Math.min(Mathf.clamp(fract - ofract) * customLiquidCapacity, this.customLiquids.get(liquid));
                     flow = Math.min(flow, ((CustomBlock) next.block).customLiquidCapacity - next.customLiquids.get(liquid));
                     if (flow > 0.0F && ofract <= fract && next.acceptCustomLiquid(this, liquid)) {
-                        next.handeCustomLiquid(this, liquid, flow);
+                        next.handleCustomLiquid(this, liquid, flow);
                         this.customLiquids.remove(liquid, flow);
                         return flow;
                     }
@@ -231,7 +228,7 @@ public class CustomBlock extends Block {
         public void transferLiquid(CustomBuilding next, float amount, CustomLiquid liquid) {
             float flow = Math.min(((CustomBlock) next.block).customLiquidCapacity  - next.customLiquids.get(liquid), amount);
             if (next.acceptCustomLiquid(this, liquid)) {
-                next.handeCustomLiquid(this, liquid, flow);
+                next.handleCustomLiquid(this, liquid, flow);
                 this.customLiquids.remove(liquid, flow);
             }
         }
@@ -284,7 +281,7 @@ public class CustomBlock extends Block {
             return hasCustomItem && this.customItems.get(item) < this.getMaximumAccepted(item);
         }
 
-        public void handeCustomLiquid(Building source, CustomLiquid liq, float amount) {
+        public void handleCustomLiquid(Building source, CustomLiquid liq, float amount) {
             customLiquids.add(liq, amount);
         }
 
