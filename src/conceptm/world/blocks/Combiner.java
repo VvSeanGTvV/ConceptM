@@ -155,7 +155,7 @@ public class Combiner extends CustomBlock {
 
             if(progress >= 1f){
                 combine();
-                for (int i=0; i<10; i++) if (Mathf.chanceDelta(0.05000000298023224)) Fx.smeltsmoke.at(x, y);
+                for (int i=0; i<10; i++) if (Mathf.chanceDelta(0.05000000298023224)) Fx.smeltsmoke.at(x + Mathf.random(-2, 2), y + Mathf.random(-2, 2));
             }
 
             if (items.any() && items != null) {

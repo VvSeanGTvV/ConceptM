@@ -13,6 +13,8 @@ import mindustry.graphics.Drawf;
 import mindustry.graphics.Pal;
 import mindustry.ui.Styles;
 
+import java.util.Objects;
+
 import static conceptm.ModTemplate.ui;
 
 public class ConsumeCustomGenerator extends GeneratorCustom {
@@ -31,6 +33,14 @@ public class ConsumeCustomGenerator extends GeneratorCustom {
         super(name);
 
         configurable = true;
+    }
+
+    @Override
+    public void init() {
+        super.init();
+
+        emitLight = true;
+        lightRadius = baseLightRadius * size;
     }
 
     public class ConsumeComboGeneratorBuild extends GeneratorComboBuild{
@@ -126,7 +136,7 @@ public class ConsumeCustomGenerator extends GeneratorCustom {
         public boolean acceptCustomItem(Building source, CustomItem item) {
             return
                     ((this.customItems.get(item) < this.getMaximumAccepted(item) && this.item == null) ||
-                    (this.customItems.get(item) < this.getMaximumAccepted(item) && this.item != null && item == this.item)) && item.flammability > 0;
+                    (this.customItems.get(item) < this.getMaximumAccepted(item) && this.item != null && Objects.equals(item.name, this.item.name))) && item.flammability > 0;
         }
 
         @Override

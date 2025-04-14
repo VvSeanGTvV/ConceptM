@@ -54,7 +54,7 @@ public class Crucible extends CustomLiquidBlock {
                 if(heat >= requirement) {
                     if (output == null) output = new CustomLiquid(item);
                     if (customLiquids.get(output) < customLiquidCapacity) {
-                        handleCustomLiquid(this, output, ((output.gas) ? 1.5f : 0.85f) * (1 * (1f + hardness * 0.05f)));
+                        handleCustomLiquid(this, output, (((output.gas) ? 1.5f : 0.85f) * (1 * (1f + hardness * 0.05f))) / 5f);
                     }
                 }
             }else{
@@ -138,7 +138,7 @@ public class Crucible extends CustomLiquidBlock {
             public Color color;
 
             public itemDisplay(TextureRegion textureRegion, int count, String name){
-                float spread = Mathf.clamp(count * 0.5f, 3f, 5f);
+                float spread = Mathf.clamp(count * 0.5f, size, size + 2f);
                 this.textureRegion = textureRegion;
                 this.pos = new Vec2(Mathf.range(spread), Mathf.range(spread));
                 this.name = name;
