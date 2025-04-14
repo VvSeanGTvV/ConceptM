@@ -9,6 +9,7 @@ import mindustry.content.Fx;
 import mindustry.content.Items;
 import mindustry.gen.Sounds;
 import mindustry.type.Category;
+import mindustry.type.ItemStack;
 import mindustry.world.Block;
 import mindustry.world.draw.DrawDefault;
 import mindustry.world.draw.DrawFlame;
@@ -20,13 +21,18 @@ import static mindustry.type.ItemStack.with;
 public class ConceptBlocks {
     public static Block
 
-    combine, comboConveyor, comboGen, mixer, comboConduit, comboLiquidTank, crucible;
+    combine, comboConveyor, comboGen, mixer, comboConduit, comboLiquidTank, crucible, unloaderLiquid;
 
     public static void load(){
         combine = new Combiner("compressor"){{
             customItemCapacity = 10;
             requirements(Category.distribution, with(Items.copper, 1));
             size = 3;
+        }};
+
+        unloaderLiquid = new UnloaderLiquid("unloader-liquid"){{
+            requirements(Category.effect, ItemStack.with(Items.titanium, 25, Items.silicon, 30));
+            speed = 7f;
         }};
 
         crucible = new Crucible("crucible"){{
