@@ -44,8 +44,8 @@ public class UnloaderLiquid extends LiquidBlock {
         clearOnDoubleTap = true;
         unloadable = false;
 
-        //config(Item.class, (UnloaderBuild tile, Item item) -> tile.sortItem = item);
-        //configClear((UnloaderBuild tile) -> tile.sortItem = null);
+        config(Liquid.class, (UnloaderLiquidBuild tile, Liquid item) -> tile.sortItem = item);
+        configClear((UnloaderLiquidBuild tile) -> tile.sortItem = null);
     }
 
     @Override
@@ -64,7 +64,7 @@ public class UnloaderLiquid extends LiquidBlock {
     @Override
     public void setBars(){
         super.setBars();
-        removeBar("liquids");
+        removeBar("liquid");
     }
 
     public static class ContainerStat implements Pool.Poolable {
