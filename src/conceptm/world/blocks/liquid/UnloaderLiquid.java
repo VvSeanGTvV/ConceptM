@@ -1,7 +1,7 @@
 package conceptm.world.blocks.liquid;
 
 import arc.graphics.Color;
-import arc.graphics.g2d.Draw;
+import arc.graphics.g2d.*;
 import arc.scene.ui.layout.Table;
 import arc.struct.Seq;
 import arc.util.io.Reads;
@@ -65,6 +65,11 @@ public class UnloaderLiquid extends LiquidBlock {
     public void setBars(){
         super.setBars();
         removeBar("liquid");
+    }
+
+    @Override
+    public TextureRegion[] icons() {
+        return new TextureRegion[]{bottomRegion, region};
     }
 
     public static class ContainerStat implements Pool.Poolable {

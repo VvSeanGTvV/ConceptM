@@ -2,6 +2,8 @@ package conceptm.world.modules;
 
 import arc.struct.Seq;
 import arc.util.Nullable;
+import arc.util.io.*;
+import conceptm.core.io.DecoderString;
 import conceptm.world.type.*;
 import mindustry.Vars;
 import mindustry.type.Liquid;
@@ -55,6 +57,24 @@ public class CustomLiquidModule {
         if (last != null) {
             last.set(last.liq, last.amount - amount);
             if (last.amount <= 0) liquids.remove(last);
+        }
+    }
+
+    public void write(Writes write){
+        write.i(liquids.size);
+        for (var liqStack : liquids){
+            write.str(liqStack.liq.name);
+            write.f(liqStack.amount);
+        }
+    }
+
+    public void read(Reads read, byte revision){
+        int size = read.i();
+        for (int i=0; i<size; i++){
+            String item = read.str();
+            int amount = read.i();
+            CustomLiquid loaded = DecoderString.loadLiquid(DecoderString.decodeString(item));
+            if (loaded != null) add(loaded, amount);
         }
     }
 }

@@ -41,7 +41,7 @@ public class CustomItem extends CustomUnlockable {
     public Item item1, item2;
     public CustomItem item1c, item2c;
     public CustomLiquid liqc;
-    public CustomItem(String name, Object a0, Object b0){
+    public CustomItem(String name, Object a0, Object b0, boolean loading){
         var aHard = (a0 instanceof Item item) ? item.hardness : (a0 instanceof CustomItem comboItem) ? comboItem.hardness : 0;
         var bHard = (b0 instanceof Item item) ? item.hardness : (b0 instanceof CustomItem comboItem) ? comboItem.hardness : 0;
         var aflame = (a0 instanceof Item item) ? item.flammability : (a0 instanceof CustomItem comboItem) ? comboItem.flammability : 0;
@@ -99,7 +99,7 @@ public class CustomItem extends CustomUnlockable {
         String an = (a0 instanceof Item ai) ? ai.name : (a0 instanceof CustomItem ac) ? ac.name : "";
         String bn = (b0 instanceof Item bi) ? bi.name : (b0 instanceof CustomItem bc) ? bc.name : "";
 
-        this.localizedName = name;
+        this.localizedName = (loading) ? name : nameRegistry.putNameFor(name, a0, b0);
         this.name = nameRegistry.generateRegistryKeyWithBracket(an, bn, "{", "}");
         createIcons(item1, item2, item1c, item2c);
         setStats();
@@ -113,7 +113,8 @@ public class CustomItem extends CustomUnlockable {
         this(
                 nameRegistry.getNameFor(item1, item2, false),
                 item1,
-                item2
+                item2,
+                false
         );
     }
 

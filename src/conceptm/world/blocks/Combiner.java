@@ -4,6 +4,7 @@ import arc.Core;
 import arc.graphics.g2d.*;
 import arc.math.Mathf;
 import arc.scene.ui.layout.Table;
+import arc.struct.Seq;
 import arc.util.*;
 import arc.util.io.*;
 import conceptm.core.io.DecoderString;
@@ -241,12 +242,22 @@ public class Combiner extends CustomBlock {
         @Override
         public void write(Writes write) {
             super.write(write);
-            //if (output != null) Log.info(DecoderString.decodeString(output.name));
+
+            write.i((select0 != null) ? select0.id : -1);
+            write.i((select1 != null) ? select1.id : -1);
+            write.str((select0c != null) ? select0c.name : "");
+            write.str((select1c != null) ? select1c.name : "");
+            write.str((output != null) ? output.name : "");
         }
 
         @Override
         public void read(Reads read, byte revision) {
             super.read(read, revision);
+            select0 = content.item(read.i());
+            select1 = content.item(read.i());
+            select0c = DecoderString.loadItem(DecoderString.decodeString(read.str()));
+            select1c = DecoderString.loadItem(DecoderString.decodeString(read.str()));
+            output = DecoderString.loadItem(DecoderString.decodeString(read.str()));
         }
     }
 }

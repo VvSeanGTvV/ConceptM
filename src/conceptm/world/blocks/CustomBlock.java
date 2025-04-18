@@ -5,6 +5,7 @@ import arc.func.Func;
 import arc.graphics.Color;
 import arc.math.Mathf;
 import arc.util.*;
+import arc.util.io.*;
 import conceptm.world.modules.*;
 import conceptm.world.type.*;
 import mindustry.content.Fx;
@@ -302,6 +303,20 @@ public class CustomBlock extends Block {
             }
             Tmp.p1.rotate(rotation);
             return nearby(Tmp.p1.x, Tmp.p1.y);
+        }
+
+        @Override
+        public void write(Writes write) {
+            super.write(write);
+            if (hasCustomItem) customItems.write(write);
+            if (hasCustomLiquid) customLiquids.write(write);
+        }
+
+        @Override
+        public void read(Reads read, byte revision) {
+            super.read(read, revision);
+            if (hasCustomItem) customItems.read(read, revision);
+            if (hasCustomLiquid) customLiquids.read(read, revision);
         }
 
         public int getMaximumAccepted(CustomItem item) {

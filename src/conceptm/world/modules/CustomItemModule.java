@@ -1,6 +1,8 @@
 package conceptm.world.modules;
 
 import arc.struct.Seq;
+import arc.util.io.*;
+import conceptm.core.io.DecoderString;
 import conceptm.world.type.*;
 
 import java.util.Objects;
@@ -54,5 +56,23 @@ public class CustomItemModule {
 
     public int total() {
         return total;
+    }
+
+    public void write(Writes write){
+        write.i(items.size);
+        for (var itemStack : items){
+            write.str(itemStack.item.name);
+            write.i(itemStack.amount);
+        }
+    }
+
+    public void read(Reads read, byte revision){
+        int size = read.i();
+        for (int i=0; i<size; i++){
+            String item = read.str();
+            int amount = read.i();
+            CustomItem loaded = DecoderString.loadItem(DecoderString.decodeString(item));
+            if (loaded != null) add(loaded, amount);
+        }
     }
 }
