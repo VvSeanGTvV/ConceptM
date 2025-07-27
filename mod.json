@@ -2,7 +2,7 @@
     "displayName": "Concept M",
     "description": "idea, dumb ideas implementation",
     "version": "1.0",
-    "minGameVersion": "147",
+    "minGameVersion": "150",
     "author": "VvSeanGtvV",
     "java": true,
     "main": "conceptm.ModTemplate"

@@ -20,8 +20,7 @@ import mindustry.world.meta.StatValue;
 import mindustry.world.meta.Stats;
 import mindustry.ui.Styles;
 
-import static arc.Core.keybinds;
-import static arc.Core.settings;
+import static arc.Core.*;
 import static mindustry.Vars.iconXLarge;
 import static conceptm.ModTemplate.ui;
 
@@ -31,9 +30,8 @@ public class ModdedContentInfoDialog extends BaseDialog {
         super("@info.title");
 
         addCloseButton();
-
         keyDown(key -> {
-            if(key == keybinds.get(Binding.block_info).key){
+            if(key == Binding.blockInfo.value.key){
                 Core.app.post(this::hide);
             }
         });

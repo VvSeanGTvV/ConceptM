@@ -108,7 +108,7 @@ public class PuddlesCustom {
     }
 
     public static void register(PuddleCustom puddle){
-        map.put(puddle.tile().pos(), puddle);
+        map.put(puddle.tile.pos(), puddle);
     }
 
     private static float reactPuddle(Object dest, Object liquid, float amount, Tile tile, float x, float y){
